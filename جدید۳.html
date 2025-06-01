@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم حسابداری آفلاین</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #064209;
+            display: flex;
+            direction: rtl; /* Set text direction to Right-to-Left for Farsi */
+            text-align: right; /* Align text to the right for Farsi */
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #166fc8;
+            color: rgb(255, 255, 255);
+            padding: 20px;
+            height: 100vh; /* Full height */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            flex-shrink: 0; /* Prevent sidebar from shrinking on smaller screens */
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #34495e;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1; /* Takes remaining space */
+            padding: 20px;
+            overflow-y: auto; /* Enable scrolling for main content if it overflows */
+        }
+
+        header {
+            background-color: #faffcd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #333;
+            text-align: right;
+        }
+
+        /* Dashboard Summary Cards */
+        .dashboard-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: #fcffcb;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 1; /* Distribute space evenly */
+            min-width: 200px; /* Minimum width for cards */
+            text-align: right;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .card p {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0;
+        }
+
+        /* General Section Styles (for lists and forms) */
+        .recent-activities, .recent-transactions, .product-list-section, .customer-supplier-list, .cheque-list-section, .invoice-list-section, .returned-items-list {
+            background-color: #fffcb9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px; /* Add margin for consistency */
+        }
+
+        .recent-activities h2, .recent-transactions h2, .product-list-section h2, .customer-supplier-list h2, .cheque-list-section h2, .invoice-list-section h2, .returned-items-list h2 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right; /* Align table content to the right */
+        }
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table thead th {
+            background-color: #e0e0e0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        table tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .income {
+            color: #28a745; /* Green for income */
+            font-weight: bold;
+        }
+
+        .expense {
+            color: #dc3545; /* Red for expense */
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        .form-section {
+            background-color: #faffcd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: calc(100% - 22px); /* Adjust for padding and border */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+
+        /* Specific styles for product selection in Faktor Forush */
+        .product-search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .product-suggestions {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .product-suggestions div {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-suggestions div:last-child {
+            border-bottom: none;
+        }
+
+        .product-suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Table in Faktor Forush/Kharid for items */
+        .invoice-items table {
+            margin-top: 20px;
+        }
+
+        .invoice-items table th,
+        .invoice-items table td {
+            white-space: nowrap; /* Prevent wrapping in item tables */
+        }
+
+        .invoice-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            text-align: left; /* Adjust alignment for summary details */
+            direction: rtl; /* Ensure RTL for overall summary block */
+        }
+
+        .invoice-summary div {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #ced4da;
+        }
+        .invoice-summary div:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .invoice-summary .total-amount {
+            color: #007bff;
+            font-size: 1.2em;
+        }
+
+        /* Collapsible Invoice Details */
+        /* Note: For list items, the main tr is usually what gets clicked and shows/hides the next tr (detail row) */
+        .invoice-main-row {
+            cursor: pointer;
+            /* No direct background or border here, rely on table tbody tr styles */
+        }
+        .invoice-main-row:hover {
+            background-color: #f0f0f0; /* Match general table hover */
+        }
+
+        .invoice-detail-expanded {
+            display: none; /* Hidden by default */
+            /* Add some padding to differentiate */
+            padding: 0;
+            background-color: #fbfcfe;
+            border-bottom: 1px solid #eee;
+        }
+
+        .invoice-detail-expanded td {
+            padding: 10px 15px; /* Adjust padding for detail cell */
+        }
+
+        .invoice-detail-expanded table {
+            width: 95%;
+            margin: 0 auto;
+            font-size: 0.9em;
+            border: 0; /* Remove outer table border for inner table */
+        }
+        .invoice-detail-expanded table th,
+        .invoice-detail-expanded table td {
+            padding: 6px 10px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        .invoice-detail-expanded table thead th {
+            background-color: #eff3f6;
+        }
+
+        /* Responsive Design (Optional, for smaller screens) */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 10px;
+                box-shadow: 0 2px 5px rgba(16, 202, 3, 0.1); /* Shadow at bottom when stacked */
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .sidebar ul li {
+                margin: 5px 10px;
+            }
+            .main-content {
+                padding: 10px;
+            }
+            .dashboard-summary {
+                flex-direction: column;
+            }
+            .card {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>منوی حسابداری</h2>
+        <ul>
+            <li><a href="#" id="link-dashboard" onclick="loadPage('dashboard'); return false;">داشبورد</a></li>
+            <li><a href="#" id="link-daramad_hazine" onclick="loadPage('daramad_hazine'); return false;">درآمد و هزینه‌ها</a></li>
+            <li><a href="#" id="link-faktor_forush" onclick="loadPage('faktor_forush'); return false;">فاکتورهای فروش</a></li>
+            <li><a href="#" id="link-faktor_kharid" onclick="loadPage('faktor_kharid'); return false;">فاکتورهای خرید</a></li>
+            <li><a href="#" id="link-moshtariyan_tamin_konandegan" onclick="loadPage('moshtariyan_tamin_konandegan'); return false;">مشتریان و تامین‌کنندگان</a></li>
+            <li><a href="#" id="link-anbar" onclick="loadPage('anbar'); return false;">انبار و موجودی</a></li>
+            <li><a href="#" id="link-kala_marjooie" onclick="loadPage('kala_marjooie'); return false;">کالاهای مرجوعی</a></li>
+            <li><a href="#" id="link-cheque" onclick="loadPage('cheque'); return false;">چک‌ها</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        </div>
+
+    <script>
+        // --- Global Variables and Utility Functions ---
+
+        // Function to highlight active menu item
+        function highlightActiveLink(pageId) {
+            document.querySelectorAll('.sidebar ul li a').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.getElementById(`link-${pageId}`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        // Function to format numbers with commas (e.g., 1,000,000)
+        function formatCurrency(amount) {
+            const num = parseFloat(amount);
+            if (isNaN(num)) return '0'; // Return '0' for NaN, not just the original amount
+            return num.toLocaleString('fa-IR');
+        }
+
+        // Simple unique ID generator
+        function generateUniqueId() {
+            return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
+        }
+
+        // --- Local Storage Management (Simulating a Database) ---
+
+        function loadData(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error(`Error loading data for key ${key}:`, e);
+                return defaultValue;
+            }
+        }
+
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.error(`Error saving data for key ${key}:`, e);
+            }
+        }
+
+        function getAppData() {
+            let appData = loadData('accountingAppData', {
+                transactions: [],
+                products: [],
+                customers: [],
+                suppliers: [],
+                salesInvoices: [],
+                purchaseInvoices: [],
+                returnedItems: [],
+                cheques: [],
+                cashBalance: 0,
+                bankBalance: 0
+            });
+            // Ensure default values if new keys are added later
+            appData.transactions = appData.transactions || [];
+            appData.products = appData.products || [];
+            appData.customers = appData.customers || [];
+            appData.suppliers = appData.suppliers || [];
+            appData.salesInvoices = appData.salesInvoices || [];
+            appData.purchaseInvoices = appData.purchaseInvoices || [];
+            appData.returnedItems = appData.returnedItems || [];
+            appData.cheques = appData.cheques || [];
+            appData.cashBalance = appData.cashBalance || 0;
+            appData.bankBalance = appData.bankBalance || 0;
+
+            return appData;
+        }
+
+        function saveAppData(appData) {
+            saveData('accountingAppData', appData);
+        }
+
+        // --- Dummy Data Initialization ---
+        function initializeDummyData() {
+            let appData = getAppData();
+
+            if (appData.products.length === 0) {
+                appData.products.push({ id: generateUniqueId(), name: 'لپ‌تاپ مدل X', unit: 'عدد', purchasePrice: 10000000, salePrice: 12000000, stock: 5 });
+                appData.products.push({ id: generateUniqueId(), name: 'مانیتور 24 اینچ', unit: 'عدد', purchasePrice: 2000000, salePrice: 2500000, stock: 10 });
+                appData.products.push({ id: generateUniqueId(), name: 'کیبورد مکانیکی', unit: 'عدد', purchasePrice: 800000, salePrice: 1000000, stock: 20 });
+                appData.products.push({ id: generateUniqueId(), name: 'هارد اکسترنال 1TB', unit: 'عدد', purchasePrice: 1500000, salePrice: 1800000, stock: 8 });
+                saveAppData(appData); // Save after adding products
+            }
+            if (appData.customers.length === 0) {
+                appData.customers.push({ id: generateUniqueId(), name: 'شرکت الفا', contact: '09121234567', balance: 0 });
+                appData.customers.push({ id: generateUniqueId(), name: 'آقای محمدی', contact: '09351234567', balance: 0 });
+                saveAppData(appData); // Save after adding customers
+            }
+            if (appData.suppliers.length === 0) {
+                appData.suppliers.push({ id: generateUniqueId(), name: 'بازرگانی بتا', contact: '02188888888', balance: 0 });
+                appData.suppliers.push({ id: generateUniqueId(), name: 'تولیدی گاما', contact: '02177777777', balance: 0 });
+                saveAppData(appData); // Save after adding suppliers
+            }
+
+            // Add some initial transactions for dashboard demo if none exist or very few
+            if (appData.transactions.length < 4) {
+                appData.transactions = [
+                    { id: generateUniqueId(), date: '1403/02/10', description: 'فروش محصول X', amount: 2000000, type: 'income', paymentMethod: 'cash' },
+                    { id: generateUniqueId(), date: '1403/02/09', description: 'خرید لوازم اداری', amount: 500000, type: 'expense', paymentMethod: 'bank' },
+                    { id: generateUniqueId(), date: '1403/02/08', description: 'دریافت وجه از مشتری A', amount: 3000000, type: 'income', paymentMethod: 'cash' },
+                    { id: generateUniqueId(), date: '1403/02/07', description: 'پرداخت اجاره', amount: 1500000, type: 'expense', paymentMethod: 'cash' },
+                ];
+                appData.cashBalance = 20000000; // Example initial balance
+                appData.bankBalance = 10000000;
+                saveAppData(appData); // Save after adding transactions
+            }
+        }
+
+        // Initialize dummy data when script loads
+        initializeDummyData();
+
+
+        // --- Page Loading Logic ---
+        const pages = {
+            'dashboard': `
+                <header>
+                    <h1>داشبورد</h1>
+                </header>
+                <section class="dashboard-summary" id="dashboard-summary">
+                    <div class="card">
+                        <h3>کل درآمد</h3>
+                        <p id="totalIncome">0 ریال</p>
+                    </div>
+                    <div class="card">
+                        <h3>کل هزینه‌ها</h3>
+                        <p id="totalExpense">0 ریال</p>
+                    </div>
+                    <div class="card">
+                        <h3>سود خالص</h3>
+                        <p id="netProfit">0 ریال</p>
+                    </div>
+                    <div class="card">
+                        <h3>موجودی نقدی</h3>
+                        <p id="cashBalance">0 ریال</p>
+                    </div>
+                    <div class="card">
+                        <h3>موجودی بانکی</h3>
+                        <p id="bankBalance">0 ریال</p>
+                    </div>
+                </section>
+                <section class="recent-activities">
+                    <h2>فعالیت‌های اخیر</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>شرح</th>
+                                <th>مبلغ (ریال)</th>
+                                <th>نوع</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivitiesList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'daramad_hazine': `
+                <header>
+                    <h1>مدیریت درآمد و هزینه‌ها</h1>
+                </header>
+                <section class="form-section">
+                    <h2>ثبت جدید</h2>
+                    <form id="incomeExpenseForm">
+                        <div class="form-group">
+                            <label for="type">نوع:</label>
+                            <select id="type" name="type" required>
+                                <option value="income">درآمد</option>
+                                <option value="expense">هزینه</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">تاریخ (مثال: 1403/02/10):</label>
+                            <input type="text" id="date" name="date" placeholder="مثال: 1403/02/10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">شرح:</label>
+                            <textarea id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">مبلغ (ریال):</label>
+                            <input type="number" id="amount" name="amount" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentMethod">نحوه پرداخت/دریافت:</label>
+                            <select id="paymentMethod" name="paymentMethod" required>
+                                <option value="cash">نقدی</option>
+                                <option value="bank">بانکی</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn">ثبت</button>
+                    </form>
+                </section>
+                <section class="recent-transactions">
+                    <h2>تراکنش‌های اخیر</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>شرح</th>
+                                <th>مبلغ (ریال)</th>
+                                <th>نوع</th>
+                                <th>نحوه</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'anbar': `
+                <header>
+                    <h1>انبار و موجودی</h1>
+                </header>
+                <section class="form-section">
+                    <h2>افزودن کالای جدید</h2>
+                    <form id="productForm">
+                        <div class="form-group">
+                            <label for="productName">نام کالا:</label>
+                            <input type="text" id="productName" name="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productUnit">واحد سنجش (مثال: عدد، کیلو، متر):</label>
+                            <input type="text" id="productUnit" name="productUnit" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchasePrice">قیمت خرید (ریال):</label>
+                            <input type="number" id="purchasePrice" name="purchasePrice" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="salePrice">قیمت فروش (ریال):</label>
+                            <input type="number" id="salePrice" name="salePrice" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="initialStock">موجودی اولیه:</label>
+                            <input type="number" id="initialStock" name="initialStock" required min="0">
+                        </div>
+                        <button type="submit" class="btn">ثبت کالا</button>
+                    </form>
+                </section>
+                <section class="product-list-section">
+                    <h2>لیست کالاها</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام کالا</th>
+                                <th>واحد</th>
+                                <th>قیمت خرید (ریال)</th>
+                                <th>قیمت فروش (ریال)</th>
+                                <th>موجودی</th>
+                                <th>ارزش موجودی (ریال)</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'faktor_forush': `
+                <header>
+                    <h1>فاکتورهای فروش</h1>
+                </header>
+                <section class="form-section">
+                    <h2>ثبت فاکتور فروش جدید</h2>
+                    <form id="salesInvoiceForm">
+                        <div class="form-group">
+                            <label for="invoiceDate">تاریخ فاکتور (مثال: 1403/02/10):</label>
+                            <input type="text" id="invoiceDate" name="invoiceDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerName">نام مشتری:</label>
+                            <select id="customerName" name="customerName" required>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productSearch">جستجوی کالا و افزودن به فاکتور:</label>
+                            <div class="product-search-container">
+                                <input type="text" id="productSearch" placeholder="نام کالا را جستجو کنید...">
+                                <div id="productSuggestions" class="product-suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="invoice-items">
+                            <h3>اقلام فاکتور:</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کالا</th>
+                                        <th>واحد</th>
+                                        <th>قیمت واحد (ریال)</th>
+                                        <th>تعداد</th>
+                                        <th>جمع (ریال)</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceItems">
+                                    <tr><td colspan="6">هیچ کالایی به فاکتور اضافه نشده است.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="invoice-summary">
+                            <div>
+                                <span>تخفیف:</span>
+                                <input type="number" id="discountAmount" value="0" min="0" style="width: 100px; text-align: right;"> ریال
+                            </div>
+                            <div>
+                                <span>مالیات:</span>
+                                <input type="number" id="taxRate" value="0" min="0" max="100" style="width: 50px; text-align: right;"> %
+                            </div>
+                            <div>
+                                <span>جمع کل اقلام:</span>
+                                <span id="subTotalAmount">0 ریال</span>
+                            </div>
+                            <div>
+                                <span>مبلغ نهایی فاکتور:</span>
+                                <span id="invoiceTotalAmount" class="total-amount">0 ریال</span>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="paymentStatus">وضعیت پرداخت:</label>
+                            <select id="paymentStatus" name="paymentStatus" required>
+                                <option value="paid">پرداخت شده</option>
+                                <option value="unpaid">پرداخت نشده (بدهی)</option>
+                                <option value="partial">بخشی پرداخت شده</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="paidAmountGroup" style="display: none;">
+                            <label for="paidAmount">مبلغ پرداخت شده (ریال):</label>
+                            <input type="number" id="paidAmount" name="paidAmount" min="0">
+                        </div>
+                         <div class="form-group">
+                            <label for="paymentMethodForInvoice">نحوه دریافت:</label>
+                            <select id="paymentMethodForInvoice" name="paymentMethodForInvoice" required>
+                                <option value="cash">نقدی</option>
+                                <option value="bank">بانکی</option>
+                                <option value="cheque">چک</option>
+                            </select>
+                        </div>
+                         <div class="form-group" id="chequeDetailsGroup" style="display: none;">
+                            <label for="chequeNumber">شماره چک:</label>
+                            <input type="text" id="chequeNumber" name="chequeNumber">
+                            <label for="chequeDate">تاریخ سررسید چک:</label>
+                            <input type="text" id="chequeDate" name="chequeDate" placeholder="مثال: 1403/03/15">
+                            <label for="chequeBank">بانک صادرکننده:</label>
+                            <input type="text" id="chequeBank" name="chequeBank">
+                        </div>
+                        <button type="submit" class="btn">ثبت فاکتور</button>
+                    </form>
+                </section>
+                <section class="invoice-list-section">
+                    <h2>لیست فاکتورهای فروش</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>شماره فاکتور</th>
+                                <th>تاریخ</th>
+                                <th>مشتری</th>
+                                <th>جمع کل (ریال)</th>
+                                <th>وضعیت پرداخت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoiceList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'faktor_kharid': `
+                <header>
+                    <h1>فاکتورهای خرید</h1>
+                </header>faktor_kharid
+                <section class="form-section">
+                    <h2>ثبت فاکتور خرید جدید</h2>
+                    <form id="purchaseInvoiceForm">
+                        <div class="form-group">
+                            <label for="purchaseInvoiceDate">تاریخ فاکتور (مثال: 1403/02/10):</label>
+                            <input type="text" id="purchaseInvoiceDate" name="purchaseInvoiceDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierName">نام تامین‌کننده:</label>
+                            <select id="supplierName" name="supplierName" required>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchaseProductSearch">جستجوی کالا و افزودن به فاکتور:</label>
+                            <div class="product-search-container">
+                                <input type="text" id="purchaseProductSearch" placeholder="نام کالا را جستجو کنید...">
+                                <div id="purchaseProductSuggestions" class="product-suggestions"></div>
+                            </div>
+                        </div>
+                        <div class="invoice-items">
+                            <h3>اقلام فاکتور:</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>کالا</th>
+                                        <th>واحد</th>
+                                        <th>قیمت واحد (ریال)</th>
+                                        <th>تعداد</th>
+                                        <th>جمع (ریال)</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="purchaseInvoiceItems">
+                                    <tr><td colspan="6">هیچ کالایی به فاکتور اضافه نشده است.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="invoice-summary">
+                             <div>
+                                <span>جمع کل اقلام:</span>
+                                <span id="purchaseSubTotalAmount">0 ریال</span>
+                            </div>
+                            <div>
+                                <span>مبلغ نهایی فاکتور:</span>
+                                <span id="purchaseInvoiceTotalAmount" class="total-amount">0 ریال</span>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label for="purchasePaymentStatus">وضعیت پرداخت:</label>
+                            <select id="purchasePaymentStatus" name="purchasePaymentStatus" required>
+                                <option value="paid">پرداخت شده</option>
+                                <option value="unpaid">پرداخت نشده (بدهی)</option>
+                                <option value="partial">بخشی پرداخت شده</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="purchasePaidAmountGroup" style="display: none;">
+                            <label for="purchasePaidAmount">مبلغ پرداخت شده (ریال):</label>
+                            <input type="number" id="purchasePaidAmount" name="purchasePaidAmount" min="0">
+                        </div>
+                         <div class="form-group">
+                            <label for="paymentMethodForPurchaseInvoice">نحوه پرداخت:</label>
+                            <select id="paymentMethodForPurchaseInvoice" name="paymentMethodForPurchaseInvoice" required>
+                                <option value="cash">نقدی</option>
+                                <option value="bank">بانکی</option>
+                                <option value="cheque">چک</option>
+                            </select>
+                        </div>
+                         <div class="form-group" id="purchaseChequeDetailsGroup" style="display: none;">
+                            <label for="purchaseChequeNumber">شماره چک:</label>
+                            <input type="text" id="purchaseChequeNumber" name="purchaseChequeNumber">
+                            <label for="purchaseChequeDate">تاریخ سررسید چک:</label>
+                            <input type="text" id="purchaseChequeDate" name="purchaseChequeDate" placeholder="مثال: 1403/03/15">
+                            <label for="purchaseChequeBank">بانک مقصد:</label>
+                            <input type="text" id="purchaseChequeBank" name="purchaseChequeBank">
+                        </div>
+                        <button type="submit" class="btn">ثبت فاکتور خرید</button>
+                    </form>
+                </section>
+                <section class="invoice-list-section">
+                    <h2>لیست فاکتورهای خرید</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>شماره فاکتور</th>
+                                <th>تاریخ</th>
+                                <th>تامین‌کننده</th>
+                                <th>جمع کل (ریال)</th>
+                                <th>وضعیت پرداخت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchaseInvoiceList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'moshtariyan_tamin_konandegan': `
+                <header>
+                    <h1>مشتریان و تامین‌کنندگان</h1>
+                </header>
+                <section class="form-section">
+                    <h2>ثبت مشتری/تامین‌کننده جدید</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="contactType">نوع:</label>
+                            <select id="contactType" name="contactType" required>
+                                <option value="customer">مشتری</option>
+                                <option value="supplier">تامین‌کننده</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactName">نام:</label>
+                            <input type="text" id="contactName" name="contactName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactNumber">شماره تماس:</label>
+                            <input type="text" id="contactNumber" name="contactNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactAddress">آدرس:</label>
+                            <textarea id="contactAddress" name="contactAddress" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn">ثبت</button>
+                    </form>
+                </section>
+
+                <section class="customer-supplier-list">
+                    <h2>لیست مشتریان</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام</th>
+                                <th>شماره تماس</th>
+                                <th>آدرس</th>
+                                <th>وضعیت حساب (ریال)</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerList">
+                            </tbody>
+                    </table>
+                </section>
+
+                <section class="customer-supplier-list">
+                    <h2>لیست تامین‌کنندگان</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نام</th>
+                                <th>شماره تماس</th>
+                                <th>آدرس</th>
+                                <th>وضعیت حساب (ریال)</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplierList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'kala_marjooie': `
+                <header>
+                    <h1>کالاهای مرجوعی</h1>
+                </header>
+                <section class="form-section">
+                    <h2>ثبت کالای مرجوعی</h2>
+                    <form id="returnedItemForm">
+                        <div class="form-group">
+                            <label for="returnType">نوع مرجوعی:</label>
+                            <select id="returnType" name="returnType" required>
+                                <option value="sales_return">مرجوعی از فروش (برگشت به انبار)</option>
+                                <option value="purchase_return">مرجوعی از خرید (برگشت به تامین‌کننده)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">تاریخ مرجوعی (مثال: 1403/02/10):</label>
+                            <input type="text" id="returnDate" name="returnDate" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="returnedProductName">نام کالای مرجوعی:</label>
+                            <input type="text" id="returnedProductName" name="returnedProductName" placeholder="نام کالا را وارد کنید..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnedQuantity">تعداد:</label>
+                            <input type="number" id="returnedQuantity" name="returnedQuantity" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="returnedAmount">مبلغ برگشتی/دریافتی (ریال):</label>
+                            <input type="number" id="returnedAmount" name="returnedAmount" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDescription">توضیحات:</label>
+                            <textarea id="returnDescription" name="returnDescription" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn">ثبت مرجوعی</button>
+                    </form>
+                </section>
+                <section class="returned-items-list">
+                    <h2>لیست کالاهای مرجوعی</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>نوع</th>
+                                <th>نام کالا</th>
+                                <th>تعداد</th>
+                                <th>مبلغ (ریال)</th>
+                                <th>توضیحات</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returnedItemList">
+                            </tbody>
+                    </table>
+                </section>
+            `,
+            'cheque': `
+                <header>
+                    <h1>مدیریت چک‌ها</h1>
+                </header>
+                <section class="form-section">
+                    <h2>ثبت چک جدید</h2>
+                    <form id="chequeForm">
+                        <div class="form-group">
+                            <label for="chequeType">نوع چک:</label>
+                            <select id="chequeType" name="chequeType" required>
+                                <option value="received">چک دریافتی</option>
+                                <option value="issued">چک پرداختی</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeNumber">شماره چک:</label>
+                            <input type="text" id="chequeNumber" name="chequeNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeAmount">مبلغ (ریال):</label>
+                            <input type="number" id="chequeAmount" name="chequeAmount" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeDate">تاریخ سررسید (مثال: 1403/03/15):</label>
+                            <input type="text" id="chequeDate" name="chequeDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeBank">بانک:</label>
+                            <input type="text" id="chequeBank" name="chequeBank" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chequeIssuer">صادرکننده/دریافت‌کننده:</label>
+                            <input type="text" id="chequeIssuer" name="chequeIssuer" placeholder="نام شخص یا شرکت" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="chequeStatus">وضعیت چک:</label>
+                            <select id="chequeStatus" name="chequeStatus" required>
+                                <option value="pending">در انتظار</option>
+                                <option value="cleared">پاس شده</option>
+                                <option value="bounced">برگشتی</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn">ثبت چک</button>
+                    </form>
+                </section>
+                <section class="cheque-list-section">
+                    <h2>لیست چک‌ها</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>نوع</th>
+                                <th>شماره چک</th>
+                                <th>مبلغ (ریال)</th>
+                                <th>تاریخ سررسید</th>
+                                <th>بانک</th>
+                                <th>صادرکننده/دریافت‌کننده</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chequeList">
+                            </tbody>
+                    </table>
+                </section>
+            `
+        };
+
+        function loadPage(pageId) {
+            const mainContentDiv = document.getElementById('mainContent');
+            mainContentDiv.innerHTML = pages[pageId];
+            highlightActiveLink(pageId);
+            window.scrollTo(0, 0); // Scroll to top on page change
+
+            // --- Attach Event Listeners and Load Data for Each Page ---
+            if (pageId === 'dashboard') {
+                loadDashboardData();
+            } else if (pageId === 'daramad_hazine') {
+                const incomeExpenseForm = document.getElementById('incomeExpenseForm');
+                const transactionList = document.getElementById('transactionList');
+                loadTransactions(); // Load existing transactions on page load
+
+                incomeExpenseForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const type = document.getElementById('type').value;
+                    const date = document.getElementById('date').value;
+                    const description = document.getElementById('description').value;
+                    const amount = parseFloat(document.getElementById('amount').value);
+                    const paymentMethod = document.getElementById('paymentMethod').value;
+
+                    if (!date || !description || isNaN(amount) || amount <= 0) {
+                        alert('لطفاً تمام فیلدها را به درستی پر کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newTransaction = {
+                        id: generateUniqueId(),
+                        date,
+                        description,
+                        amount,
+                        type,
+                        paymentMethod
+                    };
+                    appData.transactions.push(newTransaction);
+
+                    // Update cash/bank balance
+                    if (type === 'income') {
+                        if (paymentMethod === 'cash') {
+                            appData.cashBalance += amount;
+                        } else if (paymentMethod === 'bank') {
+                            appData.bankBalance += amount;
+                        }
+                    } else { // expense
+                        if (paymentMethod === 'cash') {
+                            appData.cashBalance -= amount;
+                        } else if (paymentMethod === 'bank') {
+                            appData.bankBalance -= amount; // Corrected: expense from bank should reduce bank balance
+                        }
+                    }
+
+                    saveAppData(appData);
+                    addTransactionToTable(newTransaction);
+                    incomeExpenseForm.reset();
+                    alert('تراکنش با موفقیت ثبت شد!');
+                });
+
+                transactionList.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const transactionId = event.target.dataset.id;
+                        deleteTransaction(transactionId);
+                    }
+                });
+
+                function loadTransactions() {
+                    const appData = getAppData();
+                    transactionList.innerHTML = '';
+
+                    const sortedTransactions = [...appData.transactions].sort((a, b) => b.date.localeCompare(a.date));
+
+                    if (sortedTransactions.length === 0) {
+                        transactionList.innerHTML = '<tr><td colspan="6">هیچ تراکنشی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    sortedTransactions.forEach(transaction => {
+                        addTransactionToTable(transaction, false);
+                    });
+                }
+
+                function addTransactionToTable(transaction, prepend = true) {
+                    const row = document.createElement('tr');
+                    row.dataset.id = transaction.id;
+
+                    row.innerHTML = `
+                        <td>${transaction.date}</td>
+                        <td>${transaction.description}</td>
+                        <td>${formatCurrency(transaction.amount)}</td>
+                        <td class="${transaction.type === 'income' ? 'income' : 'expense'}">${transaction.type === 'income' ? 'درآمد' : 'هزینه'}</td>
+                        <td>${transaction.paymentMethod === 'cash' ? 'نقدی' : 'بانکی'}</td>
+                        <td><button class="delete-btn" data-id="${transaction.id}">حذف</button></td>
+                    `;
+
+                    if (prepend) {
+                        transactionList.prepend(row);
+                    } else {
+                        transactionList.appendChild(row);
+                    }
+                    if (transactionList.querySelector('td[colspan="6"]') && transactionList.children.length > 1) {
+                        // If "no transactions" row exists and we've added a transaction, remove it.
+                        const noTransactionsRow = transactionList.querySelector('td[colspan="6"]');
+                        if (noTransactionsRow) {
+                             noTransactionsRow.parentNode.remove();
+                        }
+                    }
+                }
+
+                function deleteTransaction(id) {
+                    if (!confirm('آیا از حذف این تراکنش مطمئن هستید؟')) {
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const transactionIndex = appData.transactions.findIndex(t => t.id === id);
+
+                    if (transactionIndex > -1) {
+                        const transaction = appData.transactions[transactionIndex];
+
+                        if (transaction.type === 'income') {
+                            if (transaction.paymentMethod === 'cash') {
+                                appData.cashBalance -= transaction.amount;
+                            } else if (transaction.paymentMethod === 'bank') {
+                                appData.bankBalance -= transaction.amount;
+                            }
+                        } else { // expense
+                            if (transaction.paymentMethod === 'cash') {
+                                appData.cashBalance += transaction.amount;
+                            } else if (transaction.paymentMethod === 'bank') {
+                                appData.bankBalance += transaction.amount;
+                            }
+                        }
+
+                        appData.transactions.splice(transactionIndex, 1);
+                        saveAppData(appData);
+                        loadTransactions();
+                        alert('تراکنش با موفقیت حذف شد و موجودی به روز شد.');
+                    }
+                }
+
+            } else if (pageId === 'anbar') {
+                const productForm = document.getElementById('productForm');
+                const productListTableBody = document.getElementById('productList');
+                loadProducts();
+
+                productForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const productName = document.getElementById('productName').value;
+                    const productUnit = document.getElementById('productUnit').value;
+                    const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+                    const salePrice = parseFloat(document.getElementById('salePrice').value);
+                    const initialStock = parseFloat(document.getElementById('initialStock').value);
+
+                    if (!productName || !productUnit || isNaN(purchasePrice) || purchasePrice < 0 || isNaN(salePrice) || salePrice < 0 || isNaN(initialStock) || initialStock < 0) {
+                        alert('لطفاً تمام فیلدها را به درستی پر کنید و مقادیر عددی را صحیح وارد کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newProduct = {
+                        id: generateUniqueId(),
+                        name: productName,
+                        unit: productUnit,
+                        purchasePrice: purchasePrice,
+                        salePrice: salePrice,
+                        stock: initialStock
+                    };
+                    appData.products.push(newProduct);
+                    saveAppData(appData);
+                    addProductToTable(newProduct);
+                    productForm.reset();
+                    alert('کالا با موفقیت ثبت شد!');
+                });
+
+                productListTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const productId = event.target.dataset.id;
+                        deleteProduct(productId);
+                    } else if (event.target.classList.contains('edit-btn')) {
+                        const productId = event.target.dataset.id;
+                        editProduct(productId);
+                    }
+                });
+
+                function loadProducts() {
+                    const appData = getAppData();
+                    productListTableBody.innerHTML = '';
+
+                    if (appData.products.length === 0) {
+                        productListTableBody.innerHTML = '<tr><td colspan="7">هیچ کالایی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    appData.products.forEach(product => {
+                        addProductToTable(product, false);
+                    });
+                }
+
+                function addProductToTable(product, prepend = true) {
+                    const row = document.createElement('tr');
+                    row.dataset.id = product.id;
+
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.unit}</td>
+                        <td>${formatCurrency(product.purchasePrice)}</td>
+                        <td>${formatCurrency(product.salePrice)}</td>
+                        <td>${product.stock}</td>
+                        <td>${formatCurrency(product.stock * product.purchasePrice)}</td>
+                        <td>
+                            <button class="edit-btn" data-id="${product.id}">ویرایش</button>
+                            <button class="delete-btn" data-id="${product.id}">حذف</button>
+                        </td>
+                    `;
+
+                    if (prepend) {
+                        productListTableBody.prepend(row);
+                    } else {
+                        productListTableBody.appendChild(row);
+                    }
+                    if (productListTableBody.querySelector('td[colspan="7"]') && productListTableBody.children.length > 1) {
+                        const noProductsRow = productListTableBody.querySelector('td[colspan="7"]');
+                        if (noProductsRow) {
+                            noProductsRow.parentNode.remove();
+                        }
+                    }
+                }
+
+                function deleteProduct(id) {
+                    if (!confirm('آیا از حذف این کالا مطمئن هستید؟')) {
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const initialLength = appData.products.length;
+                    appData.products = appData.products.filter(p => p.id !== id);
+
+                    if (appData.products.length < initialLength) {
+                        saveAppData(appData);
+                        loadProducts();
+                        alert('کالا با موفقیت حذف شد.');
+                    } else {
+                        alert('کالا یافت نشد.');
+                    }
+                }
+
+                function editProduct(id) {
+                    let appData = getAppData();
+                    const product = appData.products.find(p => p.id === id);
+
+                    if (product) {
+                        document.getElementById('productName').value = product.name;
+                        document.getElementById('productUnit').value = product.unit;
+                        document.getElementById('purchasePrice').value = product.purchasePrice;
+                        document.getElementById('salePrice').value = product.salePrice;
+                        document.getElementById('initialStock').value = product.stock;
+
+                        const submitBtn = document.querySelector('#productForm .btn');
+                        submitBtn.textContent = 'به‌روزرسانی کالا';
+                        submitBtn.onclick = (event) => {
+                            event.preventDefault();
+                            updateProduct(id);
+                        };
+
+                        let cancelBtn = document.getElementById('cancelEditBtn');
+                        if (!cancelBtn) {
+                            cancelBtn = document.createElement('button');
+                            cancelBtn.id = 'cancelEditBtn';
+                            cancelBtn.className = 'btn';
+                            cancelBtn.style.backgroundColor = '#6c757d';
+                            cancelBtn.textContent = 'لغو ویرایش';
+                            cancelBtn.type = 'button';
+                            cancelBtn.onclick = cancelEdit;
+                            submitBtn.parentNode.insertBefore(cancelBtn, submitBtn.nextSibling);
+                        }
+                    }
+                }
+
+                function updateProduct(id) {
+                    let appData = getAppData();
+                    const productIndex = appData.products.findIndex(p => p.id === id);
+
+                    if (productIndex > -1) {
+                        const productName = document.getElementById('productName').value;
+                        const productUnit = document.getElementById('productUnit').value;
+                        const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+                        const salePrice = parseFloat(document.getElementById('salePrice').value);
+                        const stock = parseFloat(document.getElementById('initialStock').value);
+
+                        if (!productName || !productUnit || isNaN(purchasePrice) || purchasePrice < 0 || isNaN(salePrice) || salePrice < 0 || isNaN(stock) || stock < 0) {
+                            alert('لطفاً تمام فیلدها را به درستی پر کنید و مقادیر عددی را صحیح وارد کنید.');
+                            return;
+                        }
+
+                        appData.products[productIndex] = {
+                            id: id,
+                            name: productName,
+                            unit: productUnit,
+                            purchasePrice: purchasePrice,
+                            salePrice: salePrice,
+                            stock: stock
+                        };
+
+                        saveAppData(appData);
+                        loadProducts();
+                        alert('کالا با موفقیت به‌روزرسانی شد.');
+                        cancelEdit();
+                    }
+                }
+
+                function cancelEdit() {
+                    const productForm = document.getElementById('productForm');
+                    const submitBtn = document.querySelector('#productForm .btn');
+                    const cancelBtn = document.getElementById('cancelEditBtn');
+
+                    productForm.reset();
+                    submitBtn.textContent = 'ثبت کالا';
+                    submitBtn.onclick = null; // Clear custom onclick
+                    // Re-attach the original submit event listener
+                    productForm.removeEventListener('submit', handleProductFormSubmit); // Remove previous temporary handler
+                    productForm.addEventListener('submit', handleProductFormSubmit); // Attach general handler
+
+                    if (cancelBtn) {
+                        cancelBtn.remove();
+                    }
+                }
+                // Define the general product form submit handler
+                function handleProductFormSubmit(event) {
+                    event.preventDefault();
+                    const productName = document.getElementById('productName').value;
+                    const productUnit = document.getElementById('productUnit').value;
+                    const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+                    const salePrice = parseFloat(document.getElementById('salePrice').value);
+                    const initialStock = parseFloat(document.getElementById('initialStock').value);
+
+                    if (!productName || !productUnit || isNaN(purchasePrice) || purchasePrice < 0 || isNaN(salePrice) || salePrice < 0 || isNaN(initialStock) || initialStock < 0) {
+                        alert('لطفاً تمام فیلدها را به درستی پر کنید و مقادیر عددی را صحیح وارد کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newProduct = {
+                        id: generateUniqueId(),
+                        name: productName,
+                        unit: productUnit,
+                        purchasePrice: purchasePrice,
+                        salePrice: salePrice,
+                        stock: initialStock
+                    };
+                    appData.products.push(newProduct);
+                    saveAppData(appData);
+                    addProductToTable(newProduct);
+                    document.getElementById('productForm').reset();
+                    alert('کالا با موفقیت ثبت شد!');
+                }
+
+
+            } else if (pageId === 'faktor_forush') {
+                const salesInvoiceForm = document.getElementById('salesInvoiceForm');
+                const productSearchInput = document.getElementById('productSearch');
+                const productSuggestionsDiv = document.getElementById('productSuggestions');
+                const invoiceItemsTableBody = document.getElementById('invoiceItems');
+                const invoiceTotalAmountSpan = document.getElementById('invoiceTotalAmount');
+                const subTotalAmountSpan = document.getElementById('subTotalAmount');
+                const invoiceListTableBody = document.getElementById('invoiceList');
+                const customerSelect = document.getElementById('customerName');
+                const discountAmountInput = document.getElementById('discountAmount');
+                const taxRateInput = document.getElementById('taxRate');
+                const paymentStatusSelect = document.getElementById('paymentStatus');
+                const paidAmountGroup = document.getElementById('paidAmountGroup');
+                const paidAmountInput = document.getElementById('paidAmount');
+                const paymentMethodForInvoiceSelect = document.getElementById('paymentMethodForInvoice');
+                const chequeDetailsGroup = document.getElementById('chequeDetailsGroup');
+
+
+                let currentInvoiceItems = [];
+                let salesInvoiceCounter = getAppData().salesInvoices.length > 0 ? Math.max(...getAppData().salesInvoices.map(inv => inv.invoiceNumber)) + 1 : 1; // Start from 1 or max existing + 1
+
+                loadCustomersIntoSelect();
+                loadSalesInvoices();
+                updateInvoiceSummary(); // Initialize summary
+
+                paymentStatusSelect.addEventListener('change', () => {
+                    paidAmountGroup.style.display = paymentStatusSelect.value === 'partial' ? 'block' : 'none';
+                    if (paymentStatusSelect.value === 'paid' || paymentStatusSelect.value === 'partial') {
+                         paymentMethodForInvoiceSelect.required = true;
+                    } else {
+                         paymentMethodForInvoiceSelect.required = false;
+                    }
+                });
+
+                paymentMethodForInvoiceSelect.addEventListener('change', () => {
+                    chequeDetailsGroup.style.display = paymentMethodForInvoiceSelect.value === 'cheque' ? 'block' : 'none';
+                    // Reset cheque details if not cheque
+                    if (paymentMethodForInvoiceSelect.value !== 'cheque') {
+                        document.getElementById('chequeNumber').value = '';
+                        document.getElementById('chequeDate').value = '';
+                        document.getElementById('chequeBank').value = '';
+                    }
+                });
+
+
+                // --- Product Search and Selection ---
+                productSearchInput.addEventListener('input', () => {
+                    const searchText = productSearchInput.value.trim();
+                    productSuggestionsDiv.innerHTML = '';
+
+                    if (searchText.length > 0) {
+                        const appData = getAppData();
+                        const filteredProducts = appData.products.filter(p =>
+                            p.name.includes(searchText) || p.name.toLowerCase().includes(searchText.toLowerCase())
+                        );
+
+                        filteredProducts.forEach(product => {
+                            const div = document.createElement('div');
+                            div.textContent = `${product.name} (موجودی: ${product.stock} ${product.unit}) - قیمت فروش: ${formatCurrency(product.salePrice)} ریال`;
+                            div.dataset.productId = product.id;
+                            div.addEventListener('click', () => {
+                                selectProduct(product.id);
+                                productSuggestionsDiv.innerHTML = '';
+                                productSearchInput.value = '';
+                            });
+                            productSuggestionsDiv.appendChild(div);
+                        });
+                    }
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!productSearchInput.contains(event.target) && !productSuggestionsDiv.contains(event.target)) {
+                        productSuggestionsDiv.innerHTML = '';
+                    }
+                });
+
+                function selectProduct(productId) {
+                    const appData = getAppData();
+                    const selectedProduct = appData.products.find(p => p.id === productId);
+
+                    if (selectedProduct) {
+                        const existingItem = currentInvoiceItems.find(item => item.id === selectedProduct.id);
+                        if (existingItem) {
+                            alert('این کالا قبلاً به فاکتور اضافه شده است. لطفا تعداد آن را ویرایش کنید.');
+                            return;
+                        }
+                        if (selectedProduct.stock <= 0) {
+                             alert('موجودی این کالا صفر است و قابل فروش نیست.');
+                             return;
+                        }
+
+                        currentInvoiceItems.push({
+                            id: selectedProduct.id,
+                            name: selectedProduct.name,
+                            unit: selectedProduct.unit,
+                            salePrice: selectedProduct.salePrice,
+                            quantity: 1, // Default quantity
+                            total: selectedProduct.salePrice
+                        });
+                        updateInvoiceItemsTable();
+                    }
+                }
+
+                // --- Invoice Items Table Management ---
+                function updateInvoiceItemsTable() {
+                    invoiceItemsTableBody.innerHTML = '';
+
+                    if (currentInvoiceItems.length === 0) {
+                        invoiceItemsTableBody.innerHTML = '<tr><td colspan="6">هیچ کالایی به فاکتور اضافه نشده است.</td></tr>';
+                        updateInvoiceSummary(); // Update summary even if no items
+                        return;
+                    }
+
+                    currentInvoiceItems.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${item.unit}</td>
+                            <td>${formatCurrency(item.salePrice)}</td>
+                            <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="item-quantity-input" style="width: 70px;"></td>
+                            <td>${formatCurrency(item.total)}</td>
+                            <td><button class="delete-item-btn" data-index="${index}">حذف</button></td>
+                        `;
+                        invoiceItemsTableBody.appendChild(row);
+                    });
+                    updateInvoiceSummary();
+
+                    // Add event listeners for quantity input
+                    document.querySelectorAll('.item-quantity-input').forEach(input => {
+                        input.addEventListener('change', (event) => {
+                            const index = event.target.dataset.index;
+                            const newQuantity = parseInt(event.target.value);
+                            const appData = getAppData();
+                            const productInStock = appData.products.find(p => p.id === currentInvoiceItems[index].id);
+
+                            if (isNaN(newQuantity) || newQuantity <= 0) {
+                                alert('تعداد کالا باید حداقل 1 باشد.');
+                                event.target.value = currentInvoiceItems[index].quantity; // Revert to old value
+                                return;
+                            }
+                            if (productInStock && newQuantity > productInStock.stock) {
+                                alert(`تعداد وارد شده بیشتر از موجودی انبار (${productInStock.stock}) است.`);
+                                event.target.value = currentInvoiceItems[index].quantity; // Revert to old value
+                                return;
+                            }
+
+                            currentInvoiceItems[index].quantity = newQuantity;
+                            currentInvoiceItems[index].total = currentInvoiceItems[index].salePrice * newQuantity;
+                            updateInvoiceItemsTable(); // Re-render table to update totals
+                        });
+                    });
+                }
+
+                invoiceItemsTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-item-btn')) {
+                        const index = event.target.dataset.index;
+                        currentInvoiceItems.splice(index, 1);
+                        updateInvoiceItemsTable();
+                    }
+                });
+
+                discountAmountInput.addEventListener('input', updateInvoiceSummary);
+                taxRateInput.addEventListener('input', updateInvoiceSummary);
+
+                function updateInvoiceSummary() {
+                    let subTotal = currentInvoiceItems.reduce((sum, item) => sum + item.total, 0);
+                    const discount = parseFloat(discountAmountInput.value) || 0;
+                    const taxRate = parseFloat(taxRateInput.value) || 0;
+
+                    if (discount > subTotal) {
+                        alert('مبلغ تخفیف نمی‌تواند بیشتر از جمع کل اقلام باشد.');
+                        discountAmountInput.value = 0;
+                        return updateInvoiceSummary(); // Recalculate
+                    }
+
+                    let totalAfterDiscount = subTotal - discount;
+                    let taxAmount = (totalAfterDiscount * taxRate) / 100;
+                    let finalTotal = totalAfterDiscount + taxAmount;
+
+                    subTotalAmountSpan.textContent = formatCurrency(subTotal);
+                    invoiceTotalAmountSpan.textContent = formatCurrency(finalTotal);
+
+                    // Also update paidAmountInput max value
+                    paidAmountInput.max = finalTotal;
+                    if (parseFloat(paidAmountInput.value) > finalTotal) {
+                        paidAmountInput.value = finalTotal;
+                    }
+                }
+
+                // --- Sales Invoice Form Submission ---
+                salesInvoiceForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const invoiceDate = document.getElementById('invoiceDate').value;
+                    const customerId = document.getElementById('customerName').value;
+                    const discountAmount = parseFloat(discountAmountInput.value) || 0;
+                    const taxRate = parseFloat(taxRateInput.value) || 0;
+                    const paymentStatus = paymentStatusSelect.value;
+                    const paidAmount = parseFloat(paidAmountInput.value) || 0;
+                    const paymentMethodForInvoice = paymentMethodForInvoiceSelect.value;
+                    const chequeNumber = document.getElementById('chequeNumber').value;
+                    const chequeDate = document.getElementById('chequeDate').value;
+                    const chequeBank = document.getElementById('chequeBank').value;
+
+
+                    if (!invoiceDate || !customerId || currentInvoiceItems.length === 0) {
+                        alert('لطفاً تاریخ، مشتری و حداقل یک کالا را وارد کنید.');
+                        return;
+                    }
+
+                    if (paymentStatus === 'partial' && (isNaN(paidAmount) || paidAmount <= 0)) {
+                        alert('برای وضعیت "بخشی پرداخت شده"، مبلغ پرداخت شده را وارد کنید.');
+                        return;
+                    }
+
+                    const appData = getAppData();
+                    const selectedCustomer = appData.customers.find(c => c.id === customerId);
+                    if (!selectedCustomer) {
+                        alert('مشتری انتخاب شده نامعتبر است.');
+                        return;
+                    }
+
+                    let subTotal = currentInvoiceItems.reduce((sum, item) => sum + item.total, 0);
+                    let totalAfterDiscount = subTotal - discountAmount;
+                    let taxAmount = (totalAfterDiscount * taxRate) / 100;
+                    let finalTotal = totalAfterDiscount + taxAmount;
+
+                    if (paymentStatus === 'partial' && paidAmount > finalTotal) {
+                         alert('مبلغ پرداخت شده نباید بیشتر از مبلغ نهایی فاکتور باشد.');
+                         return;
+                    }
+
+                    if (paymentMethodForInvoice === 'cheque' && (!chequeNumber || !chequeDate || !chequeBank)) {
+                         alert('لطفا جزئیات چک (شماره، تاریخ و بانک) را تکمیل کنید.');
+                         return;
+                    }
+
+
+                    // Check stock before saving
+                    for (const item of currentInvoiceItems) {
+                        const productInStock = appData.products.find(p => p.id === item.id);
+                        if (!productInStock || productInStock.stock < item.quantity) {
+                            alert(`موجودی کافی برای کالای "${item.name}" وجود ندارد. موجودی: ${productInStock ? productInStock.stock : 0}`);
+                            return;
+                        }
+                    }
+
+                    // Proceed to save
+                    const newInvoice = {
+                        id: generateUniqueId(),
+                        invoiceNumber: salesInvoiceCounter++,
+                        date: invoiceDate,
+                        customerId: customerId,
+                        customerName: selectedCustomer.name,
+                        items: currentInvoiceItems,
+                        subTotal: subTotal,
+                        discount: discountAmount,
+                        taxRate: taxRate,
+                        totalAmount: finalTotal,
+                        paymentStatus: paymentStatus,
+                        paidAmount: (paymentStatus === 'paid') ? finalTotal : paidAmount,
+                        paymentMethod: paymentMethodForInvoice,
+                        chequeDetails: paymentMethodForInvoice === 'cheque' ? { chequeNumber, chequeDate, chequeBank } : null
+                    };
+
+                    appData.salesInvoices.push(newInvoice);
+
+                    // Update product stock
+                    currentInvoiceItems.forEach(item => {
+                        const product = appData.products.find(p => p.id === item.id);
+                        if (product) {
+                            product.stock -= item.quantity;
+                        }
+                    });
+
+                    // Update cash/bank balance and customer balance
+                    let amountToAffectBalance = 0;
+                    if (paymentStatus === 'paid' || paymentStatus === 'partial') {
+                        amountToAffectBalance = newInvoice.paidAmount;
+                        if (paymentMethodForInvoice === 'cash') {
+                            appData.cashBalance += amountToAffectBalance;
+                        } else if (paymentMethodForInvoice === 'bank') {
+                            appData.bankBalance += amountToAffectBalance;
+                        } else if (paymentMethodForInvoice === 'cheque') {
+                            // If cheque, it affects balance when cleared, but record here for tracking
+                            appData.cheques.push({
+                                id: generateUniqueId(),
+                                type: 'received',
+                                number: chequeNumber,
+                                amount: newInvoice.totalAmount, // Full invoice amount on cheque
+                                dueDate: chequeDate,
+                                bank: chequeBank,
+                                issuerReceiver: selectedCustomer.name,
+                                status: 'pending',
+                                invoiceId: newInvoice.id
+                            });
+                        }
+                    }
+
+                    // Update customer balance (if unpaid or partially paid, customer owes)
+                    if (paymentStatus === 'unpaid') {
+                        selectedCustomer.balance += finalTotal; // Customer owes
+                    } else if (paymentStatus === 'partial') {
+                        selectedCustomer.balance += (finalTotal - newInvoice.paidAmount); // Customer owes remaining
+                    }
+
+                    saveAppData(appData);
+                    loadSalesInvoices();
+                    resetSalesInvoiceForm();
+                    alert('فاکتور فروش با موفقیت ثبت شد!');
+                });
+
+                function loadCustomersIntoSelect() {
+                    const appData = getAppData();
+                    customerSelect.innerHTML = '<option value="">انتخاب مشتری</option>'; // Default option
+                    appData.customers.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer.id;
+                        option.textContent = customer.name;
+                        customerSelect.appendChild(option);
+                    });
+                }
+
+                function loadSalesInvoices() {
+                    const appData = getAppData();
+                    invoiceListTableBody.innerHTML = '';
+
+                    const sortedInvoices = [...appData.salesInvoices].sort((a, b) => b.invoiceNumber - a.invoiceNumber);
+
+                    if (sortedInvoices.length === 0) {
+                        invoiceListTableBody.innerHTML = '<tr><td colspan="6">هیچ فاکتور فروشی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    sortedInvoices.forEach(invoice => {
+                        // Main invoice row
+                        const mainRow = document.createElement('tr');
+                        mainRow.classList.add('invoice-main-row');
+                        mainRow.dataset.invoiceId = invoice.id; // To link with detail row
+
+                        mainRow.innerHTML = `
+                            <td>${invoice.invoiceNumber}</td>
+                            <td>${invoice.date}</td>
+                            <td>${invoice.customerName}</td>
+                            <td>${formatCurrency(invoice.totalAmount)}</td>
+                            <td>${getPaymentStatusText(invoice.paymentStatus, invoice.totalAmount, invoice.paidAmount)}</td>
+                            <td><button class="delete-btn" data-id="${invoice.id}">حذف</button></td>
+                        `;
+                        invoiceListTableBody.appendChild(mainRow);
+
+                        // Detail row for invoice items (initially hidden)
+                        const detailRow = document.createElement('tr');
+                        detailRow.classList.add('invoice-detail-expanded');
+                        detailRow.dataset.invoiceId = invoice.id;
+
+                        let itemsHtml = `
+                            <td colspan="6">
+                                <div style="padding: 5px 0;">
+                                    <strong>اقلام فاکتور:</strong>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>کالا</th>
+                                                <th>تعداد</th>
+                                                <th>قیمت واحد (ریال)</th>
+                                                <th>جمع (ریال)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+                        if (invoice.items && invoice.items.length > 0) {
+                            invoice.items.forEach(item => {
+                                itemsHtml += `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.quantity} ${item.unit}</td>
+                                        <td>${formatCurrency(item.salePrice)}</td>
+                                        <td>${formatCurrency(item.total)}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            itemsHtml += `<tr><td colspan="4">هیچ کالایی در این فاکتور ثبت نشده است.</td></tr>`;
+                        }
+                        itemsHtml += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        `;
+                        detailRow.innerHTML = itemsHtml;
+                        invoiceListTableBody.appendChild(detailRow);
+                    });
+
+                    // Add event listeners for toggling item visibility
+                    document.querySelectorAll('.invoice-main-row').forEach(row => {
+                        row.addEventListener('click', (event) => {
+                            // Prevent toggling when delete button is clicked
+                            if (!event.target.classList.contains('delete-btn')) {
+                                const invoiceId = row.dataset.invoiceId;
+                                const detailRow = document.querySelector(`.invoice-detail-expanded[data-invoice-id="${invoiceId}"]`);
+                                if (detailRow) {
+                                    detailRow.style.display = detailRow.style.display === 'table-row' ? 'none' : 'table-row';
+                                }
+                            }
+                        });
+                    });
+                }
+
+                function getPaymentStatusText(status, total, paid) {
+                    if (status === 'paid') return 'پرداخت شده';
+                    if (status === 'unpaid') return 'پرداخت نشده';
+                    if (status === 'partial') return `بخشی پرداخت شده (${formatCurrency(paid)} از ${formatCurrency(total)})`;
+                    return status;
+                }
+
+                function resetSalesInvoiceForm() {
+                    salesInvoiceForm.reset();
+                    currentInvoiceItems = [];
+                    updateInvoiceItemsTable(); // Clear items table
+                    paymentStatusSelect.value = 'paid'; // Reset payment status
+                    paidAmountGroup.style.display = 'none'; // Hide paid amount
+                    paymentMethodForInvoiceSelect.value = 'cash'; // Reset payment method
+                    chequeDetailsGroup.style.display = 'none'; // Hide cheque details
+                    updateInvoiceSummary(); // Reset summary values
+                }
+
+                invoiceListTableBody.addEventListener('click', (event) => {
+                    // Check if the click was on the delete button directly
+                    if (event.target.classList.contains('delete-btn')) {
+                        const invoiceId = event.target.dataset.id;
+                        deleteSalesInvoice(invoiceId);
+                    }
+                    // For general row click, the event listener is on invoice-main-row
+                });
+
+                function deleteSalesInvoice(id) {
+                    if (!confirm('آیا از حذف این فاکتور فروش مطمئن هستید؟ این کار موجودی کالا و حساب مشتری را تحت تاثیر قرار می‌دهد.')) {
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const invoiceIndex = appData.salesInvoices.findIndex(inv => inv.id === id);
+
+                    if (invoiceIndex > -1) {
+                        const invoice = appData.salesInvoices[invoiceIndex];
+
+                        // Revert product stock
+                        invoice.items.forEach(item => {
+                            const product = appData.products.find(p => p.id === item.id);
+                            if (product) {
+                                product.stock += item.quantity;
+                            }
+                        });
+
+                        // Revert cash/bank balance if money was received
+                        if (invoice.paymentStatus === 'paid' || invoice.paymentStatus === 'partial') {
+                            let amountToRevert = invoice.paidAmount;
+                            if (invoice.paymentMethod === 'cash') {
+                                appData.cashBalance -= amountToRevert;
+                            } else if (invoice.paymentMethod === 'bank') {
+                                appData.bankBalance -= amountToRevert;
+                            } else if (invoice.paymentMethod === 'cheque' && invoice.chequeDetails) {
+                                // If cheque, also remove it from cheques list
+                                appData.cheques = appData.cheques.filter(c => c.invoiceId !== invoice.id);
+                            }
+                        }
+
+                        // Revert customer balance
+                        const customer = appData.customers.find(c => c.id === invoice.customerId);
+                        if (customer && invoice.paymentStatus !== 'paid') { // If customer owed, reduce their balance
+                            customer.balance -= (invoice.totalAmount - invoice.paidAmount);
+                        }
+
+                        appData.salesInvoices.splice(invoiceIndex, 1);
+                        saveAppData(appData);
+                        loadSalesInvoices();
+                        alert('فاکتور فروش با موفقیت حذف شد و موجودی‌ها به‌روزرسانی شدند.');
+                    }
+                }
+
+
+            } else if (pageId === 'faktor_kharid') {
+                 const purchaseInvoiceForm = document.getElementById('purchaseInvoiceForm');
+                const purchaseProductSearchInput = document.getElementById('purchaseProductSearch');
+                const purchaseProductSuggestionsDiv = document.getElementById('purchaseProductSuggestions');
+                const purchaseInvoiceItemsTableBody = document.getElementById('purchaseInvoiceItems');
+                const purchaseInvoiceTotalAmountSpan = document.getElementById('purchaseInvoiceTotalAmount');
+                const purchaseSubTotalAmountSpan = document.getElementById('purchaseSubTotalAmount');
+                const purchaseInvoiceListTableBody = document.getElementById('purchaseInvoiceList');
+                const supplierSelect = document.getElementById('supplierName');
+                const purchasePaymentStatusSelect = document.getElementById('purchasePaymentStatus');
+                const purchasePaidAmountGroup = document.getElementById('purchasePaidAmountGroup');
+                const purchasePaidAmountInput = document.getElementById('purchasePaidAmount');
+                const paymentMethodForPurchaseInvoiceSelect = document.getElementById('paymentMethodForPurchaseInvoice');
+                const purchaseChequeDetailsGroup = document.getElementById('purchaseChequeDetailsGroup');
+
+
+                let currentPurchaseInvoiceItems = [];
+                let purchaseInvoiceCounter = getAppData().purchaseInvoices.length > 0 ? Math.max(...getAppData().purchaseInvoices.map(inv => inv.invoiceNumber)) + 1 : 1;
+
+                loadSuppliersIntoSelect();
+                loadPurchaseInvoices(); // Load existing invoices on page load
+                updatePurchaseInvoiceSummary();
+
+                purchasePaymentStatusSelect.addEventListener('change', () => {
+                    purchasePaidAmountGroup.style.display = purchasePaymentStatusSelect.value === 'partial' ? 'block' : 'none';
+                     if (purchasePaymentStatusSelect.value === 'paid' || purchasePaymentStatusSelect.value === 'partial') {
+                         paymentMethodForPurchaseInvoiceSelect.required = true;
+                    } else {
+                         paymentMethodForPurchaseInvoiceSelect.required = false;
+                    }
+                });
+
+                paymentMethodForPurchaseInvoiceSelect.addEventListener('change', () => {
+                    purchaseChequeDetailsGroup.style.display = paymentMethodForPurchaseInvoiceSelect.value === 'cheque' ? 'block' : 'none';
+                    // Reset cheque details if not cheque
+                    if (paymentMethodForPurchaseInvoiceSelect.value !== 'cheque') {
+                        document.getElementById('purchaseChequeNumber').value = '';
+                        document.getElementById('purchaseChequeDate').value = '';
+                        document.getElementById('purchaseChequeBank').value = '';
+                    }
+                });
+
+
+                // --- Product Search and Selection for Purchase ---
+                purchaseProductSearchInput.addEventListener('input', () => {
+                    const searchText = purchaseProductSearchInput.value.trim();
+                    purchaseProductSuggestionsDiv.innerHTML = '';
+
+                    if (searchText.length > 0) {
+                        const appData = getAppData();
+                        const filteredProducts = appData.products.filter(p =>
+                            p.name.includes(searchText) || p.name.toLowerCase().includes(searchText.toLowerCase())
+                        );
+
+                        filteredProducts.forEach(product => {
+                            const div = document.createElement('div');
+                            div.textContent = `${product.name} (موجودی: ${product.stock} ${product.unit}) - قیمت خرید: ${formatCurrency(product.purchasePrice)} ریال`;
+                            div.dataset.productId = product.id;
+                            div.addEventListener('click', () => {
+                                selectPurchaseProduct(product.id);
+                                purchaseProductSuggestionsDiv.innerHTML = '';
+                                purchaseProductSearchInput.value = '';
+                            });
+                            purchaseProductSuggestionsDiv.appendChild(div);
+                        });
+                    }
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!purchaseProductSearchInput.contains(event.target) && !purchaseProductSuggestionsDiv.contains(event.target)) {
+                        purchaseProductSuggestionsDiv.innerHTML = '';
+                    }
+                });
+
+                function selectPurchaseProduct(productId) {
+                    const appData = getAppData();
+                    const selectedProduct = appData.products.find(p => p.id === productId);
+
+                    if (selectedProduct) {
+                        const existingItem = currentPurchaseInvoiceItems.find(item => item.id === selectedProduct.id);
+                        if (existingItem) {
+                            alert('این کالا قبلاً به فاکتور اضافه شده است. لطفا تعداد آن را ویرایش کنید.');
+                            return;
+                        }
+
+                        currentPurchaseInvoiceItems.push({
+                            id: selectedProduct.id,
+                            name: selectedProduct.name,
+                            unit: selectedProduct.unit,
+                            purchasePrice: selectedProduct.purchasePrice, // Initial purchase price
+                            salePrice: selectedProduct.salePrice, // Initial sale price
+                            quantity: 1,
+                            total: selectedProduct.purchasePrice, // Initial total
+                            newPurchasePrice: selectedProduct.purchasePrice, // To hold potential new purchase price
+                            newSalePrice: selectedProduct.salePrice // To hold potential new sale price
+                        });
+                        updatePurchaseInvoiceItemsTable();
+                    }
+                }
+
+                // --- Purchase Invoice Items Table Management ---
+                function updatePurchaseInvoiceItemsTable() {
+                    purchaseInvoiceItemsTableBody.innerHTML = '';
+
+                    if (currentPurchaseInvoiceItems.length === 0) {
+                        purchaseInvoiceItemsTableBody.innerHTML = '<tr><td colspan="8">هیچ کالایی به فاکتور اضافه نشده است.</td></tr>'; // Adjusted colspan
+                        updatePurchaseInvoiceSummary();
+                        return;
+                    }
+
+                    currentPurchaseInvoiceItems.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${item.unit}</td>
+                            <td>${formatCurrency(item.purchasePrice)}</td>
+                            <td><input type="number" value="${item.quantity}" min="1" data-index="${index}" class="purchase-item-quantity-input" style="width: 70px;"></td>
+                            <td><input type="number" value="${item.newPurchasePrice}" min="0" data-index="${index}" class="purchase-item-new-purchase-price-input" style="width: 100px;"></td>
+                            <td><input type="number" value="${item.newSalePrice}" min="0" data-index="${index}" class="purchase-item-new-sale-price-input" style="width: 100px;"></td>
+                            <td>${formatCurrency(item.total)}</td>
+                            <td><button class="delete-item-btn" data-index="${index}">حذف</button></td>
+                        `;
+                        purchaseInvoiceItemsTableBody.appendChild(row);
+                    });
+                    updatePurchaseInvoiceSummary();
+
+                    document.querySelectorAll('.purchase-item-quantity-input').forEach(input => {
+                        input.addEventListener('change', (event) => {
+                            const index = event.target.dataset.index;
+                            const newQuantity = parseInt(event.target.value);
+                            if (isNaN(newQuantity) || newQuantity <= 0) {
+                                alert('تعداد کالا باید حداقل 1 باشد.');
+                                event.target.value = currentPurchaseInvoiceItems[index].quantity;
+                                return;
+                            }
+                            currentPurchaseInvoiceItems[index].quantity = newQuantity;
+                            currentPurchaseInvoiceItems[index].total = currentPurchaseInvoiceItems[index].newPurchasePrice * newQuantity; // Use newPurchasePrice for total calculation
+                            updatePurchaseInvoiceItemsTable();
+                        });
+                    });
+
+                    document.querySelectorAll('.purchase-item-new-purchase-price-input').forEach(input => {
+                        input.addEventListener('change', (event) => {
+                            const index = event.target.dataset.index;
+                            const newPrice = parseFloat(event.target.value);
+                            if (isNaN(newPrice) || newPrice < 0) {
+                                alert('قیمت خرید باید یک عدد مثبت باشد.');
+                                event.target.value = currentPurchaseInvoiceItems[index].newPurchasePrice;
+                                return;
+                            }
+                            currentPurchaseInvoiceItems[index].newPurchasePrice = newPrice;
+                            currentPurchaseInvoiceItems[index].total = newPrice * currentPurchaseInvoiceItems[index].quantity;
+                            updatePurchaseInvoiceItemsTable();
+                        });
+                    });
+
+                    document.querySelectorAll('.purchase-item-new-sale-price-input').forEach(input => {
+                        input.addEventListener('change', (event) => {
+                            const index = event.target.dataset.index;
+                            const newPrice = parseFloat(event.target.value);
+                            if (isNaN(newPrice) || newPrice < 0) {
+                                alert('قیمت فروش باید یک عدد مثبت باشد.');
+                                event.target.value = currentPurchaseInvoiceItems[index].newSalePrice;
+                                return;
+                            }
+                            currentPurchaseInvoiceItems[index].newSalePrice = newPrice;
+                            // Note: Sale price doesn't affect invoice total, but is stored for product update
+                        });
+                    });
+                }
+
+                purchaseInvoiceItemsTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-item-btn')) {
+                        const index = event.target.dataset.index;
+                        currentPurchaseInvoiceItems.splice(index, 1);
+                        updatePurchaseInvoiceItemsTable();
+                    }
+                });
+
+
+                function updatePurchaseInvoiceSummary() {
+                    let subTotal = currentPurchaseInvoiceItems.reduce((sum, item) => sum + item.total, 0);
+                    purchaseSubTotalAmountSpan.textContent = formatCurrency(subTotal);
+                    purchaseInvoiceTotalAmountSpan.textContent = formatCurrency(subTotal);
+
+                    // Update paidAmountInput max value
+                    purchasePaidAmountInput.max = subTotal;
+                    if (parseFloat(purchasePaidAmountInput.value) > subTotal) {
+                        purchasePaidAmountInput.value = subTotal;
+                    }
+                }
+
+                // --- Purchase Invoice Form Submission ---
+                purchaseInvoiceForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const purchaseInvoiceDate = document.getElementById('purchaseInvoiceDate').value;
+                    const supplierId = document.getElementById('supplierName').value;
+                    const paymentStatus = purchasePaymentStatusSelect.value;
+                    const paidAmount = parseFloat(document.getElementById('purchasePaidAmount').value) || 0;
+                    const paymentMethodForPurchaseInvoice = document.getElementById('paymentMethodForPurchaseInvoice').value;
+                    const chequeNumber = document.getElementById('purchaseChequeNumber').value;
+                    const chequeDate = document.getElementById('purchaseChequeDate').value;
+                    const chequeBank = document.getElementById('purchaseChequeBank').value;
+
+                    if (!purchaseInvoiceDate || !supplierId || currentPurchaseInvoiceItems.length === 0) {
+                        alert('لطفاً تاریخ، تامین‌کننده و حداقل یک کالا را وارد کنید.');
+                        return;
+                    }
+
+                    if (paymentStatus === 'partial' && (isNaN(paidAmount) || paidAmount <= 0)) {
+                        alert('برای وضعیت "بخشی پرداخت شده"، مبلغ پرداخت شده را وارد کنید.');
+                        return;
+                    }
+                     if (paymentStatus === 'partial' && paidAmount > currentPurchaseInvoiceItems.reduce((sum, item) => sum + item.total, 0)) {
+                         alert('مبلغ پرداخت شده نباید بیشتر از مبلغ نهایی فاکتور باشد.');
+                         return;
+                    }
+                    if (paymentMethodForPurchaseInvoice === 'cheque' && (!chequeNumber || !chequeDate || !chequeBank)) {
+                         alert('لطفا جزئیات چک (شماره، تاریخ و بانک) را تکمیل کنید.');
+                         return;
+                    }
+
+
+                    const appData = getAppData();
+                    const selectedSupplier = appData.suppliers.find(s => s.id === supplierId);
+                    if (!selectedSupplier) {
+                        alert('تامین‌کننده انتخاب شده نامعتبر است.');
+                        return;
+                    }
+
+                    let totalAmount = currentPurchaseInvoiceItems.reduce((sum, item) => sum + item.total, 0);
+
+                    const newPurchaseInvoice = {
+                        id: generateUniqueId(),
+                        invoiceNumber: purchaseInvoiceCounter++,
+                        date: purchaseInvoiceDate,
+                        supplierId: supplierId,
+                        supplierName: selectedSupplier.name,
+                        items: currentPurchaseInvoiceItems,
+                        totalAmount: totalAmount,
+                        paymentStatus: paymentStatus,
+                        paidAmount: (paymentStatus === 'paid') ? totalAmount : paidAmount,
+                        paymentMethod: paymentMethodForPurchaseInvoice,
+                        chequeDetails: paymentMethodForPurchaseInvoice === 'cheque' ? { chequeNumber, chequeDate, chequeBank } : null
+                    };
+
+                    appData.purchaseInvoices.push(newPurchaseInvoice);
+
+                    // Update product stock and prices (increase for purchase)
+                    currentPurchaseInvoiceItems.forEach(item => {
+                        const product = appData.products.find(p => p.id === item.id);
+                        if (product) {
+                            product.stock += item.quantity;
+                            // Update purchase and sale prices if new values are provided and valid
+                            if (!isNaN(item.newPurchasePrice) && item.newPurchasePrice >= 0) {
+                                product.purchasePrice = item.newPurchasePrice;
+                            }
+                            if (!isNaN(item.newSalePrice) && item.newSalePrice >= 0) {
+                                product.salePrice = item.newSalePrice;
+                            }
+                        }
+                    });
+
+                    // Update cash/bank balance if money was paid
+                    let amountToAffectBalance = 0;
+                    if (paymentStatus === 'paid' || paymentStatus === 'partial') {
+                        amountToAffectBalance = newPurchaseInvoice.paidAmount;
+                        if (paymentMethodForPurchaseInvoice === 'cash') {
+                            appData.cashBalance -= amountToAffectBalance;
+                        } else if (paymentMethodForPurchaseInvoice === 'bank') {
+                            appData.bankBalance -= amountToAffectBalance;
+                        } else if (paymentMethodForPurchaseInvoice === 'cheque') {
+                            appData.cheques.push({
+                                id: generateUniqueId(),
+                                type: 'issued',
+                                number: chequeNumber,
+                                amount: newPurchaseInvoice.totalAmount,
+                                dueDate: chequeDate,
+                                bank: chequeBank,
+                                issuerReceiver: selectedSupplier.name,
+                                status: 'pending',
+                                invoiceId: newPurchaseInvoice.id
+                            });
+                        }
+                    }
+
+                    // Update supplier balance (if unpaid or partially paid, we owe)
+                    if (paymentStatus === 'unpaid') {
+                        selectedSupplier.balance -= totalAmount; // We owe supplier
+                    } else if (paymentStatus === 'partial') {
+                        selectedSupplier.balance -= (totalAmount - newPurchaseInvoice.paidAmount); // We owe supplier remaining
+                    }
+
+                    saveAppData(appData);
+                    loadPurchaseInvoices(); // Re-load the list after adding
+                    resetPurchaseInvoiceForm();
+                    alert('فاکتور خرید با موفقیت ثبت شد!');
+                });
+
+                function loadSuppliersIntoSelect() {
+                    const appData = getAppData();
+                    supplierSelect.innerHTML = '<option value="">انتخاب تامین‌کننده</option>';
+                    appData.suppliers.forEach(supplier => {
+                        const option = document.createElement('option');
+                        option.value = supplier.id;
+                        option.textContent = supplier.name;
+                        supplierSelect.appendChild(option);
+                    });
+                }
+
+                function loadPurchaseInvoices() {
+                    const appData = getAppData();
+                    purchaseInvoiceListTableBody.innerHTML = '';
+
+                    const sortedInvoices = [...appData.purchaseInvoices].sort((a, b) => b.invoiceNumber - a.invoiceNumber);
+
+                    if (sortedInvoices.length === 0) {
+                        purchaseInvoiceListTableBody.innerHTML = '<tr><td colspan="6">هیچ فاکتور خریدی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    sortedInvoices.forEach(invoice => {
+                        // Main invoice row
+                        const mainRow = document.createElement('tr');
+                        mainRow.classList.add('invoice-main-row');
+                        mainRow.dataset.invoiceId = invoice.id; // To link with detail row
+
+                        mainRow.innerHTML = `
+                            <td>${invoice.invoiceNumber}</td>
+                            <td>${invoice.date}</td>
+                            <td>${invoice.supplierName}</td>
+                            <td>${formatCurrency(invoice.totalAmount)}</td>
+                            <td>${getPaymentStatusText(invoice.paymentStatus, invoice.totalAmount, invoice.paidAmount)}</td>
+                            <td><button class="delete-btn" data-id="${invoice.id}">حذف</button></td>
+                        `;
+                        purchaseInvoiceListTableBody.appendChild(mainRow);
+
+                        // Detail row for invoice items (initially hidden)
+                        const detailRow = document.createElement('tr');
+                        detailRow.classList.add('invoice-detail-expanded');
+                        detailRow.dataset.invoiceId = invoice.id;
+
+                        let itemsHtml = `
+                            <td colspan="6">
+                                <div style="padding: 5px 0;">
+                                    <strong>اقلام فاکتور:</strong>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>کالا</th>
+                                                <th>تعداد</th>
+                                                <th>قیمت واحد (ریال)</th>
+                                                <th>جمع (ریال)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+                        if (invoice.items && invoice.items.length > 0) {
+                            invoice.items.forEach(item => {
+                                itemsHtml += `
+                                    <tr>
+                                        <td>${item.name}</td>
+                                        <td>${item.quantity} ${item.unit}</td>
+                                        <td>${formatCurrency(item.purchasePrice)}</td>
+                                        <td>${formatCurrency(item.total)}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            itemsHtml += `<tr><td colspan="4">هیچ کالایی در این فاکتور ثبت نشده است.</td></tr>`;
+                        }
+                        itemsHtml += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        `;
+                        detailRow.innerHTML = itemsHtml;
+                        purchaseInvoiceListTableBody.appendChild(detailRow);
+                    });
+
+                    // Add event listeners for toggling item visibility
+                    document.querySelectorAll('.invoice-main-row').forEach(row => {
+                        row.addEventListener('click', (event) => {
+                            // Prevent toggling when delete button is clicked
+                            if (!event.target.classList.contains('delete-btn')) {
+                                const invoiceId = row.dataset.invoiceId;
+                                const detailRow = document.querySelector(`.invoice-detail-expanded[data-invoice-id="${invoiceId}"]`);
+                                if (detailRow) {
+                                    detailRow.style.display = detailRow.style.display === 'table-row' ? 'none' : 'table-row';
+                                }
+                            }
+                        });
+                    });
+                }
+
+                function resetPurchaseInvoiceForm() {
+                    purchaseInvoiceForm.reset();
+                    currentPurchaseInvoiceItems = [];
+                    updatePurchaseInvoiceItemsTable();
+                    purchasePaymentStatusSelect.value = 'paid';
+                    purchasePaidAmountGroup.style.display = 'none';
+                    paymentMethodForPurchaseInvoiceSelect.value = 'cash';
+                    purchaseChequeDetailsGroup.style.display = 'none';
+                    updatePurchaseInvoiceSummary();
+                }
+
+                purchaseInvoiceListTableBody.addEventListener('click', (event) => {
+                    // Check if the click was on the delete button directly
+                    if (event.target.classList.contains('delete-btn')) {
+                        const invoiceId = event.target.dataset.id;
+                        deletePurchaseInvoice(invoiceId);
+                    }
+                    // For general row click, the event listener is on invoice-main-row
+                });
+
+                function deletePurchaseInvoice(id) {
+                    if (!confirm('آیا از حذف این فاکتور خرید مطمئن هستید؟ این کار موجودی کالا و حساب تامین‌کننده را تحت تاثیر قرار می‌دهد.')) {
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const invoiceIndex = appData.purchaseInvoices.findIndex(inv => inv.id === id);
+
+                    if (invoiceIndex > -1) {
+                        const invoice = appData.purchaseInvoices[invoiceIndex];
+
+                        // Revert product stock and prices (if they were updated by this invoice)
+                        invoice.items.forEach(item => {
+                            const product = appData.products.find(p => p.id === item.id);
+                            if (product) {
+                                product.stock -= item.quantity;
+                                // Note: Reverting price changes is complex as it depends on purchase history.
+                                // For simplicity, we are NOT reverting price changes here.
+                                // If accurate historical pricing is critical, a more robust system is needed.
+                                // However, stock changes are always reverted as they are cumulative.
+                            }
+                        });
+
+                        // Revert cash/bank balance if money was paid
+                        if (invoice.paymentStatus === 'paid' || invoice.paymentStatus === 'partial') {
+                            let amountToRevert = invoice.paidAmount;
+                            if (invoice.paymentMethod === 'cash') {
+                                appData.cashBalance += amountToRevert;
+                            } else if (invoice.paymentMethod === 'bank') {
+                                appData.bankBalance += amountToRevert;
+                            } else if (invoice.paymentMethod === 'cheque' && invoice.chequeDetails) {
+                                appData.cheques = appData.cheques.filter(c => c.invoiceId !== invoice.id);
+                            }
+                        }
+
+                        // Revert supplier balance
+                        const supplier = appData.suppliers.find(s => s.id === invoice.supplierId);
+                        if (supplier && invoice.paymentStatus !== 'paid') {
+                            supplier.balance += (invoice.totalAmount - invoice.paidAmount);
+                        }
+
+                        appData.purchaseInvoices.splice(invoiceIndex, 1);
+                        saveAppData(appData);
+                        loadPurchaseInvoices();
+                        alert('فاکتور خرید با موفقیت حذف شد و موجودی‌ها به‌روزرسانی شدند.');
+                    }
+                }
+
+            } else if (pageId === 'moshtariyan_tamin_konandegan') {
+                const contactForm = document.getElementById('contactForm');
+                const customerListTableBody = document.getElementById('customerList');
+                const supplierListTableBody = document.getElementById('supplierList');
+
+                loadContacts();
+
+                contactForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const contactType = document.getElementById('contactType').value;
+                    const contactName = document.getElementById('contactName').value;
+                    const contactNumber = document.getElementById('contactNumber').value;
+                    const contactAddress = document.getElementById('contactAddress').value;
+
+                    if (!contactName || !contactType) {
+                        alert('نام و نوع شخص/شرکت الزامی است.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newContact = {
+                        id: generateUniqueId(),
+                        name: contactName,
+                        contact: contactNumber,
+                        address: contactAddress,
+                        balance: 0 // Initial balance
+                    };
+
+                    if (contactType === 'customer') {
+                        appData.customers.push(newContact);
+                        addContactToTable(newContact, 'customer');
+                    } else if (contactType === 'supplier') {
+                        appData.suppliers.push(newContact);
+                        addContactToTable(newContact, 'supplier');
+                    }
+                    saveAppData(appData);
+                    contactForm.reset();
+                    alert(`${contactType === 'customer' ? 'مشتری' : 'تامین‌کننده'} با موفقیت ثبت شد!`);
+                });
+
+                customerListTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const contactId = event.target.dataset.id;
+                        deleteContact(contactId, 'customer');
+                    } else if (event.target.classList.contains('edit-btn')) {
+                        const contactId = event.target.dataset.id;
+                        editContact(contactId, 'customer');
+                    }
+                });
+
+                supplierListTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const contactId = event.target.dataset.id;
+                        deleteContact(contactId, 'supplier');
+                    } else if (event.target.classList.contains('edit-btn')) {
+                        const contactId = event.target.dataset.id;
+                        editContact(contactId, 'supplier');
+                    }
+                });
+
+                function loadContacts() {
+                    const appData = getAppData();
+                    customerListTableBody.innerHTML = '';
+                    supplierListTableBody.innerHTML = '';
+
+                    if (appData.customers.length === 0) {
+                        customerListTableBody.innerHTML = '<tr><td colspan="5">هیچ مشتری برای نمایش وجود ندارد.</td></tr>';
+                    } else {
+                        appData.customers.forEach(customer => addContactToTable(customer, 'customer', false));
+                    }
+                    if (appData.suppliers.length === 0) {
+                        supplierListTableBody.innerHTML = '<tr><td colspan="5">هیچ تامین‌کننده‌ای برای نمایش وجود ندارد.</td></tr>';
+                    } else {
+                        appData.suppliers.forEach(supplier => addContactToTable(supplier, 'supplier', false));
+                    }
+                }
+
+                function addContactToTable(contact, type, prepend = true) {
+                    const tableBody = type === 'customer' ? customerListTableBody : supplierListTableBody;
+                    const row = document.createElement('tr');
+                    row.dataset.id = contact.id;
+                    row.innerHTML = `
+                        <td>${contact.name}</td>
+                        <td>${contact.contact || '-'}</td>
+                        <td>${contact.address || '-'}</td>
+                        <td class="${contact.balance > 0 ? 'expense' : (contact.balance < 0 ? 'income' : '')}">${formatCurrency(contact.balance)}</td>
+                        <td>
+                            <button class="edit-btn" data-id="${contact.id}" data-type="${type}">ویرایش</button>
+                            <button class="delete-btn" data-id="${contact.id}" data-type="${type}">حذف</button>
+                        </td>
+                    `;
+                    if (prepend) {
+                        tableBody.prepend(row);
+                    } else {
+                        tableBody.appendChild(row);
+                    }
+                    if (tableBody.querySelector('td[colspan="5"]') && tableBody.children.length > 1) {
+                        const noContactRow = tableBody.querySelector('td[colspan="5"]');
+                        if (noContactRow) {
+                            noContactRow.parentNode.remove();
+                        }
+                    }
+                }
+
+                function deleteContact(id, type) {
+                    if (!confirm(`آیا از حذف این ${type === 'customer' ? 'مشتری' : 'تامین‌کننده'} مطمئن هستید؟`)) {
+                        return;
+                    }
+                    let appData = getAppData();
+                    if (type === 'customer') {
+                        appData.customers = appData.customers.filter(c => c.id !== id);
+                    } else if (type === 'supplier') {
+                        appData.suppliers = appData.suppliers.filter(s => s.id !== id);
+                    }
+                    saveAppData(appData);
+                    loadContacts();
+                    alert(`${type === 'customer' ? 'مشتری' : 'تامین‌کننده'} با موفقیت حذف شد.`);
+                }
+
+                function editContact(id, type) {
+                    let appData = getAppData();
+                    const contact = type === 'customer' ? appData.customers.find(c => c.id === id) : appData.suppliers.find(s => s.id === id);
+
+                    if (contact) {
+                        document.getElementById('contactType').value = type;
+                        document.getElementById('contactName').value = contact.name;
+                        document.getElementById('contactNumber').value = contact.contact;
+                        document.getElementById('contactAddress').value = contact.address;
+
+                        const submitBtn = document.querySelector('#contactForm .btn');
+                        submitBtn.textContent = 'به‌روزرسانی';
+                        submitBtn.onclick = (event) => {
+                            event.preventDefault();
+                            updateContact(id, type);
+                        };
+
+                        let cancelBtn = document.getElementById('cancelEditBtn');
+                        if (!cancelBtn) {
+                            cancelBtn = document.createElement('button');
+                            cancelBtn.id = 'cancelEditBtn';
+                            cancelBtn.className = 'btn';
+                            cancelBtn.style.backgroundColor = '#6c757d';
+                            cancelBtn.textContent = 'لغو ویرایش';
+                            cancelBtn.type = 'button';
+                            cancelBtn.onclick = cancelContactEdit;
+                            submitBtn.parentNode.insertBefore(cancelBtn, submitBtn.nextSibling);
+                        }
+                    }
+                }
+
+                function updateContact(id, type) {
+                    let appData = getAppData();
+                    let contacts = type === 'customer' ? appData.customers : appData.suppliers;
+                    const contactIndex = contacts.findIndex(c => c.id === id);
+
+                    if (contactIndex > -1) {
+                        const contactName = document.getElementById('contactName').value;
+                        const contactNumber = document.getElementById('contactNumber').value;
+                        const contactAddress = document.getElementById('contactAddress').value;
+
+                        if (!contactName) {
+                            alert('نام شخص/شرکت الزامی است.');
+                            return;
+                        }
+
+                        contacts[contactIndex].name = contactName;
+                        contacts[contactIndex].contact = contactNumber;
+                        contacts[contactIndex].address = contactAddress;
+
+                        saveAppData(appData);
+                        loadContacts();
+                        alert(`${type === 'customer' ? 'مشتری' : 'تامین‌کننده'} با موفقیت به‌روزرسانی شد.`);
+                        cancelContactEdit();
+                    }
+                }
+
+                function cancelContactEdit() {
+                    const contactForm = document.getElementById('contactForm');
+                    const submitBtn = document.querySelector('#contactForm .btn');
+                    const cancelBtn = document.getElementById('cancelEditBtn');
+
+                    contactForm.reset();
+                    submitBtn.textContent = 'ثبت';
+                    submitBtn.onclick = null;
+                    contactForm.removeEventListener('submit', handleContactFormSubmit);
+                    contactForm.addEventListener('submit', handleContactFormSubmit);
+
+                    if (cancelBtn) {
+                        cancelBtn.remove();
+                    }
+                }
+                function handleContactFormSubmit(event) {
+                     event.preventDefault();
+                    const contactType = document.getElementById('contactType').value;
+                    const contactName = document.getElementById('contactName').value;
+                    const contactNumber = document.getElementById('contactNumber').value;
+                    const contactAddress = document.getElementById('contactAddress').value;
+
+                    if (!contactName || !contactType) {
+                        alert('نام و نوع شخص/شرکت الزامی است.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newContact = {
+                        id: generateUniqueId(),
+                        name: contactName,
+                        contact: contactNumber,
+                        address: contactAddress,
+                        balance: 0
+                    };
+
+                    if (contactType === 'customer') {
+                        appData.customers.push(newContact);
+                        addContactToTable(newContact, 'customer');
+                    } else if (contactType === 'supplier') {
+                        appData.suppliers.push(newContact);
+                        addContactToTable(newContact, 'supplier');
+                    }
+                    saveAppData(appData);
+                    document.getElementById('contactForm').reset();
+                    alert(`${contactType === 'customer' ? 'مشتری' : 'تامین‌کننده'} با موفقیت ثبت شد!`);
+                }
+
+            } else if (pageId === 'kala_marjooie') {
+                const returnedItemForm = document.getElementById('returnedItemForm');
+                const returnedItemListTableBody = document.getElementById('returnedItemList');
+
+                loadReturnedItems();
+
+                returnedItemForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const returnType = document.getElementById('returnType').value;
+                    const returnDate = document.getElementById('returnDate').value;
+                    const returnedProductName = document.getElementById('returnedProductName').value;
+                    const returnedQuantity = parseFloat(document.getElementById('returnedQuantity').value);
+                    const returnedAmount = parseFloat(document.getElementById('returnedAmount').value);
+                    const returnDescription = document.getElementById('returnDescription').value;
+
+                    if (!returnDate || !returnedProductName || isNaN(returnedQuantity) || returnedQuantity <= 0 || isNaN(returnedAmount) || returnedAmount < 0) {
+                        alert('لطفاً تمام فیلدهای الزامی را پر کنید و مقادیر عددی را صحیح وارد کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newReturnedItem = {
+                        id: generateUniqueId(),
+                        type: returnType,
+                        date: returnDate,
+                        productName: returnedProductName,
+                        quantity: returnedQuantity,
+                        amount: returnedAmount,
+                        description: returnDescription
+                    };
+                    appData.returnedItems.push(newReturnedItem);
+
+                    // Update product stock based on return type
+                    const productToUpdate = appData.products.find(p => p.name === returnedProductName);
+                    if (productToUpdate) {
+                        if (returnType === 'sales_return') {
+                            productToUpdate.stock += returnedQuantity; // Customer returned, add to stock
+                        } else if (returnType === 'purchase_return') {
+                            productToUpdate.stock -= returnedQuantity; // We returned to supplier, subtract from stock
+                        }
+                    } else {
+                        alert('کالایی با این نام در انبار یافت نشد. موجودی انبار به روزرسانی نمی‌شود.');
+                    }
+
+                    // Adjust cash/bank balance
+                    if (returnType === 'sales_return') { // We paid back to customer
+                        appData.cashBalance -= returnedAmount; // Assuming cash refund
+                    } else if (returnType === 'purchase_return') { // We received money back from supplier
+                        appData.cashBalance += returnedAmount; // Assuming cash refund
+                    }
+
+
+                    saveAppData(appData);
+                    addReturnedItemToTable(newReturnedItem);
+                    returnedItemForm.reset();
+                    alert('کالای مرجوعی با موفقیت ثبت شد و موجودی‌ها به روزرسانی شدند.');
+                });
+
+                returnedItemListTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const itemId = event.target.dataset.id;
+                        deleteReturnedItem(itemId);
+                    }
+                });
+
+                function loadReturnedItems() {
+                    const appData = getAppData();
+                    returnedItemListTableBody.innerHTML = '';
+                    const sortedItems = [...appData.returnedItems].sort((a, b) => b.date.localeCompare(a.date));
+
+                    if (sortedItems.length === 0) {
+                        returnedItemListTableBody.innerHTML = '<tr><td colspan="7">هیچ کالای مرجوعی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    sortedItems.forEach(item => {
+                        addReturnedItemToTable(item, false);
+                    });
+                }
+
+                function addReturnedItemToTable(item, prepend = true) {
+                    const row = document.createElement('tr');
+                    row.dataset.id = item.id;
+                    row.innerHTML = `
+                        <td>${item.date}</td>
+                        <td>${item.type === 'sales_return' ? 'مرجوعی فروش' : 'مرجوعی خرید'}</td>
+                        <td>${item.productName}</td>
+                        <td>${item.quantity}</td>
+                        <td>${formatCurrency(item.amount)}</td>
+                        <td>${item.description || '-'}</td>
+                        <td><button class="delete-btn" data-id="${item.id}">حذف</button></td>
+                    `;
+                    if (prepend) {
+                        returnedItemListTableBody.prepend(row);
+                    } else {
+                        returnedItemListTableBody.appendChild(row);
+                    }
+                    if (returnedItemListTableBody.querySelector('td[colspan="7"]') && returnedItemListTableBody.children.length > 1) {
+                        const noReturnedItemRow = returnedItemListTableBody.querySelector('td[colspan="7"]');
+                        if (noReturnedItemRow) {
+                            noReturnedItemRow.parentNode.remove();
+                        }
+                    }
+                }
+
+                function deleteReturnedItem(id) {
+                    if (!confirm('آیا از حذف این کالای مرجوعی مطمئن هستید؟ این کار موجودی انبار را تحت تاثیر قرار می‌دهد.')) {
+                        return;
+                    }
+                    let appData = getAppData();
+                    const itemIndex = appData.returnedItems.findIndex(item => item.id === id);
+
+                    if (itemIndex > -1) {
+                        const item = appData.returnedItems[itemIndex];
+
+                        // Revert stock changes
+                        const productToUpdate = appData.products.find(p => p.name === item.productName);
+                        if (productToUpdate) {
+                            if (item.type === 'sales_return') {
+                                productToUpdate.stock -= item.quantity; // Remove from stock
+                            } else if (item.type === 'purchase_return') {
+                                productToUpdate.stock += item.quantity; // Add back to stock
+                            }
+                        }
+
+                        // Revert cash/bank changes
+                        if (item.type === 'sales_return') { // We paid back, now reverse (add back to cash)
+                            appData.cashBalance += item.amount;
+                        } else if (item.type === 'purchase_return') { // We received, now reverse (subtract from cash)
+                            appData.cashBalance -= item.amount;
+                        }
+
+                        appData.returnedItems.splice(itemIndex, 1);
+                        saveAppData(appData);
+                        loadReturnedItems();
+                        alert('کالای مرجوعی با موفقیت حذف شد و موجودی‌ها به روزرسانی شدند.');
+                    }
+                }
+
+            } else if (pageId === 'cheque') {
+                 const chequeForm = document.getElementById('chequeForm');
+                const chequeListTableBody = document.getElementById('chequeList');
+
+                loadCheques();
+
+                chequeForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const chequeType = document.getElementById('chequeType').value;
+                    const chequeNumber = document.getElementById('chequeNumber').value;
+                    const chequeAmount = parseFloat(document.getElementById('chequeAmount').value);
+                    const chequeDate = document.getElementById('chequeDate').value;
+                    const chequeBank = document.getElementById('chequeBank').value;
+                    const chequeIssuer = document.getElementById('chequeIssuer').value;
+                    const chequeStatus = document.getElementById('chequeStatus').value;
+
+                    if (!chequeNumber || isNaN(chequeAmount) || chequeAmount <= 0 || !chequeDate || !chequeBank || !chequeIssuer) {
+                        alert('لطفاً تمام فیلدهای الزامی را پر کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newCheque = {
+                        id: generateUniqueId(),
+                        type: chequeType,
+                        number: chequeNumber,
+                        amount: chequeAmount,
+                        dueDate: chequeDate,
+                        bank: chequeBank,
+                        issuerReceiver: chequeIssuer,
+                        status: chequeStatus
+                    };
+
+                    appData.cheques.push(newCheque);
+
+                    // If cheque is immediately 'cleared', update cash/bank balance
+                    if (chequeStatus === 'cleared') {
+                        if (chequeType === 'received') {
+                            appData.bankBalance += chequeAmount; // Received cheque clears to bank
+                        } else if (chequeType === 'issued') {
+                            appData.bankBalance -= chequeAmount; // Issued cheque clears from bank
+                        }
+                    }
+
+                    saveAppData(appData);
+                    addChequeToTable(newCheque);
+                    chequeForm.reset();
+                    alert('چک با موفقیت ثبت شد!');
+                });
+
+                chequeListTableBody.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('delete-btn')) {
+                        const chequeId = event.target.dataset.id;
+                        deleteCheque(chequeId);
+                    } else if (event.target.classList.contains('edit-btn')) {
+                        const chequeId = event.target.dataset.id;
+                        editCheque(chequeId);
+                    } else if (event.target.classList.contains('status-btn')) {
+                        const chequeId = event.target.dataset.id;
+                        const newStatus = event.target.dataset.status;
+                        updateChequeStatus(chequeId, newStatus);
+                    }
+                });
+
+                function loadCheques() {
+                    const appData = getAppData();
+                    chequeListTableBody.innerHTML = '';
+                    const sortedCheques = [...appData.cheques].sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+
+                    if (sortedCheques.length === 0) {
+                        chequeListTableBody.innerHTML = '<tr><td colspan="8">هیچ چکی برای نمایش وجود ندارد.</td></tr>';
+                        return;
+                    }
+
+                    sortedCheques.forEach(cheque => {
+                        addChequeToTable(cheque, false);
+                    });
+                }
+
+                function getChequeStatusText(status) {
+                    switch (status) {
+                        case 'pending': return 'در انتظار';
+                        case 'cleared': return 'پاس شده';
+                        case 'bounced': return 'برگشتی';
+                        default: return status;
+                    }
+                }
+
+                function addChequeToTable(cheque, prepend = true) {
+                    const row = document.createElement('tr');
+                    row.dataset.id = cheque.id;
+                    let statusClass = '';
+                    switch (cheque.status) {
+                        case 'pending': statusClass = ''; break;
+                        case 'cleared': statusClass = 'income'; break; // Greenish
+                        case 'bounced': statusClass = 'expense'; break; // Reddish
+                    }
+
+                    row.innerHTML = `
+                        <td>${cheque.type === 'received' ? 'دریافتی' : 'پرداختی'}</td>
+                        <td>${cheque.number}</td>
+                        <td>${formatCurrency(cheque.amount)}</td>
+                        <td>${cheque.dueDate}</td>
+                        <td>${cheque.bank}</td>
+                        <td>${cheque.issuerReceiver}</td>
+                        <td class="${statusClass}">${getChequeStatusText(cheque.status)}</td>
+                        <td>
+                            <button class="edit-btn" data-id="${cheque.id}">ویرایش</button>
+                            <button class="delete-btn" data-id="${cheque.id}">حذف</button>
+                            ${cheque.status === 'pending' ?
+                                `<button class="status-btn btn" data-id="${cheque.id}" data-status="cleared" style="background-color: #28a745; margin-right: 5px;">پاس کردن</button>
+                                <button class="status-btn btn" data-id="${cheque.id}" data-status="bounced" style="background-color: #ffc107;">برگشت زدن</button>` : ''
+                            }
+                        </td>
+                    `;
+                    if (prepend) {
+                        chequeListTableBody.prepend(row);
+                    } else {
+                        chequeListTableBody.appendChild(row);
+                    }
+                    if (chequeListTableBody.querySelector('td[colspan="8"]') && chequeListTableBody.children.length > 1) {
+                        const noChequeRow = chequeListTableBody.querySelector('td[colspan="8"]');
+                        if (noChequeRow) {
+                            noChequeRow.parentNode.remove();
+                        }
+                    }
+                }
+
+                function deleteCheque(id) {
+                    if (!confirm('آیا از حذف این چک مطمئن هستید؟')) {
+                        return;
+                    }
+                    let appData = getAppData();
+                    const chequeIndex = appData.cheques.findIndex(c => c.id === id);
+
+                    if (chequeIndex > -1) {
+                        const cheque = appData.cheques[chequeIndex];
+                        // If cheque was cleared, revert balance
+                        if (cheque.status === 'cleared') {
+                            if (cheque.type === 'received') {
+                                appData.bankBalance -= cheque.amount;
+                            } else if (cheque.type === 'issued') {
+                                appData.bankBalance += cheque.amount;
+                            }
+                        }
+                        appData.cheques.splice(chequeIndex, 1);
+                        saveAppData(appData);
+                        loadCheques();
+                        alert('چک با موفقیت حذف شد.');
+                    }
+                }
+
+                function editCheque(id) {
+                    let appData = getAppData();
+                    const cheque = appData.cheques.find(c => c.id === id);
+
+                    if (cheque) {
+                        document.getElementById('chequeType').value = cheque.type;
+                        document.getElementById('chequeNumber').value = cheque.number;
+                        document.getElementById('chequeAmount').value = cheque.amount;
+                        document.getElementById('chequeDate').value = cheque.dueDate;
+                        document.getElementById('chequeBank').value = cheque.bank;
+                        document.getElementById('chequeIssuer').value = cheque.issuerReceiver;
+                        document.getElementById('chequeStatus').value = cheque.status;
+
+                        const submitBtn = document.querySelector('#chequeForm .btn');
+                        submitBtn.textContent = 'به‌روزرسانی چک';
+                        submitBtn.onclick = (event) => {
+                            event.preventDefault();
+                            updateCheque(id);
+                        };
+
+                        let cancelBtn = document.getElementById('cancelEditBtn');
+                        if (!cancelBtn) {
+                            cancelBtn = document.createElement('button');
+                            cancelBtn.id = 'cancelEditBtn';
+                            cancelBtn.className = 'btn';
+                            cancelBtn.style.backgroundColor = '#6c757d';
+                            cancelBtn.textContent = 'لغو ویرایش';
+                            cancelBtn.type = 'button';
+                            cancelBtn.onclick = cancelChequeEdit;
+                            submitBtn.parentNode.insertBefore(cancelBtn, submitBtn.nextSibling);
+                        }
+                    }
+                }
+
+                function updateCheque(id) {
+                    let appData = getAppData();
+                    const chequeIndex = appData.cheques.findIndex(c => c.id === id);
+
+                    if (chequeIndex > -1) {
+                        const oldCheque = appData.cheques[chequeIndex];
+
+                        const chequeType = document.getElementById('chequeType').value;
+                        const chequeNumber = document.getElementById('chequeNumber').value;
+                        const chequeAmount = parseFloat(document.getElementById('chequeAmount').value);
+                        const chequeDate = document.getElementById('chequeDate').value;
+                        const chequeBank = document.getElementById('chequeBank').value;
+                        const chequeIssuer = document.getElementById('chequeIssuer').value;
+                        const chequeStatus = document.getElementById('chequeStatus').value;
+
+                         if (!chequeNumber || isNaN(chequeAmount) || chequeAmount <= 0 || !chequeDate || !chequeBank || !chequeIssuer) {
+                            alert('لطفاً تمام فیلدهای الزامی را پر کنید.');
+                            return;
+                        }
+
+                        // Revert old status effect on balance if it was cleared
+                        if (oldCheque.status === 'cleared') {
+                            if (oldCheque.type === 'received') {
+                                appData.bankBalance -= oldCheque.amount;
+                            } else if (oldCheque.type === 'issued') {
+                                appData.bankBalance += oldCheque.amount;
+                            }
+                        }
+
+                        // Apply new status effect on balance if it's now cleared
+                        if (chequeStatus === 'cleared') {
+                            if (chequeType === 'received') {
+                                appData.bankBalance += chequeAmount;
+                            } else if (chequeType === 'issued') {
+                                appData.bankBalance -= chequeAmount;
+                            }
+                        }
+
+                        appData.cheques[chequeIndex] = {
+                            id: id,
+                            type: chequeType,
+                            number: chequeNumber,
+                            amount: chequeAmount,
+                            dueDate: chequeDate,
+                            bank: chequeBank,
+                            issuerReceiver: chequeIssuer,
+                            status: chequeStatus
+                        };
+
+                        saveAppData(appData);
+                        loadCheques();
+                        alert('چک با موفقیت به‌روزرسانی شد.');
+                        cancelChequeEdit();
+                    }
+                }
+
+                function cancelChequeEdit() {
+                    const chequeForm = document.getElementById('chequeForm');
+                    const submitBtn = document.querySelector('#chequeForm .btn');
+                    const cancelBtn = document.getElementById('cancelEditBtn');
+
+                    chequeForm.reset();
+                    submitBtn.textContent = 'ثبت چک';
+                    submitBtn.onclick = null;
+                    chequeForm.removeEventListener('submit', handleChequeFormSubmit);
+                    chequeForm.addEventListener('submit', handleChequeFormSubmit);
+
+                    if (cancelBtn) {
+                        cancelBtn.remove();
+                    }
+                }
+
+                function handleChequeFormSubmit(event) {
+                    event.preventDefault();
+                    const chequeType = document.getElementById('chequeType').value;
+                    const chequeNumber = document.getElementById('chequeNumber').value;
+                    const chequeAmount = parseFloat(document.getElementById('chequeAmount').value);
+                    const chequeDate = document.getElementById('chequeDate').value;
+                    const chequeBank = document.getElementById('chequeBank').value;
+                    const chequeIssuer = document.getElementById('chequeIssuer').value;
+                    const chequeStatus = document.getElementById('chequeStatus').value;
+
+                    if (!chequeNumber || isNaN(chequeAmount) || chequeAmount <= 0 || !chequeDate || !chequeBank || !chequeIssuer) {
+                        alert('لطفاً تمام فیلدهای الزامی را پر کنید.');
+                        return;
+                    }
+
+                    let appData = getAppData();
+                    const newCheque = {
+                        id: generateUniqueId(),
+                        type: chequeType,
+                        number: chequeNumber,
+                        amount: chequeAmount,
+                        dueDate: chequeDate,
+                        bank: chequeBank,
+                        issuerReceiver: chequeIssuer,
+                        status: chequeStatus
+                    };
+
+                    appData.cheques.push(newCheque);
+
+                    if (chequeStatus === 'cleared') {
+                        if (chequeType === 'received') {
+                            appData.bankBalance += chequeAmount;
+                        } else if (chequeType === 'issued') {
+                            appData.bankBalance -= chequeAmount;
+                        }
+                    }
+
+                    saveAppData(appData);
+                    addChequeToTable(newCheque);
+                    document.getElementById('chequeForm').reset();
+                    alert('چک با موفقیت ثبت شد!');
+                }
+
+                function updateChequeStatus(id, newStatus) {
+                    let appData = getAppData();
+                    const chequeIndex = appData.cheques.findIndex(c => c.id === id);
+
+                    if (chequeIndex > -1) {
+                        const cheque = appData.cheques[chequeIndex];
+                        const oldStatus = cheque.status;
+
+                        if (oldStatus === 'cleared' && newStatus !== 'cleared') {
+                            // If previously cleared, revert balance change
+                             if (cheque.type === 'received') {
+                                appData.bankBalance -= cheque.amount;
+                            } else if (cheque.type === 'issued') {
+                                appData.bankBalance += cheque.amount;
+                            }
+                        } else if (newStatus === 'cleared' && oldStatus !== 'cleared') {
+                            // If new status is cleared, apply balance change
+                            if (cheque.type === 'received') {
+                                appData.bankBalance += cheque.amount;
+                            } else if (cheque.type === 'issued') {
+                                appData.bankBalance -= cheque.amount;
+                            }
+                        }
+
+                        cheque.status = newStatus;
+                        saveAppData(appData);
+                        loadCheques();
+                        alert('وضعیت چک به روزرسانی شد.');
+                    }
+                }
+
+            }
+
+            // --- Dashboard Specific Logic ---
+            function loadDashboardData() {
+                const appData = getAppData();
+                const totalIncome = appData.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+                const totalExpense = appData.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+                const netProfit = totalIncome - totalExpense;
+
+                document.getElementById('totalIncome').textContent = formatCurrency(totalIncome) + ' ریال';
+                document.getElementById('totalExpense').textContent = formatCurrency(totalExpense) + ' ریال';
+                document.getElementById('netProfit').textContent = formatCurrency(netProfit) + ' ریال';
+                document.getElementById('cashBalance').textContent = formatCurrency(appData.cashBalance) + ' ریال';
+                document.getElementById('bankBalance').textContent = formatCurrency(appData.bankBalance) + ' ریال';
+
+                const recentActivitiesList = document.getElementById('recentActivitiesList');
+                recentActivitiesList.innerHTML = ''; // Clear previous entries
+
+                const sortedTransactions = [...appData.transactions].sort((a, b) => b.date.localeCompare(a.date));
+                const recentTransactions = sortedTransactions.slice(0, 5); // Show last 5 transactions
+
+                if (recentTransactions.length === 0) {
+                    recentActivitiesList.innerHTML = '<tr><td colspan="4">هیچ فعالیتی برای نمایش وجود ندارد.</td></tr>';
+                } else {
+                    recentTransactions.forEach(transaction => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${transaction.date}</td>
+                            <td>${transaction.description}</td>
+                            <td>${formatCurrency(transaction.amount)}</td>
+                            <td class="${transaction.type === 'income' ? 'income' : 'expense'}">${transaction.type === 'income' ? 'درآمد' : 'هزینه'}</td>
+                        `;
+                        recentActivitiesList.appendChild(row);
+                    });
+                }
+            }
+
+
+            // After loading page content, ensure all forms have their correct submit handlers
+            // This is a workaround for dynamic content loading, as event listeners need re-attachment.
+            // For a single HTML file, this can get complex; using a framework simplifies this.
+            if (document.getElementById('productForm')) {
+                document.getElementById('productForm').addEventListener('submit', handleProductFormSubmit);
+            }
+             if (document.getElementById('incomeExpenseForm')) {
+                // Handled in daramad_hazine section
+            }
+             if (document.getElementById('contactForm')) {
+                document.getElementById('contactForm').addEventListener('submit', handleContactFormSubmit);
+            }
+             if (document.getElementById('chequeForm')) {
+                 document.getElementById('chequeForm').addEventListener('submit', handleChequeFormSubmit);
+            }
+             if (document.getElementById('salesInvoiceForm')) {
+                // Handled in faktor_forush section
+            }
+             if (document.getElementById('purchaseInvoiceForm')) {
+                 // The event listener is attached within the loadPage('faktor_kharid') block.
+                 // To prevent duplicate listeners if loadPage is called multiple times without full DOM refresh,
+                 // one might explicitly remove and re-add or use a flag. For this single-page app structure,
+                 // this pattern is generally fine as the mainContent innerHTML replaces everything.
+            }
+             if (document.getElementById('returnedItemForm')) {
+                // Handled in kala_marjooie section
+            }
+        }
+
+
+        // Load dashboard by default when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPage('dashboard');
+        });
+    </script>
+</body>
+</html>
