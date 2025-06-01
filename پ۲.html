@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>سامانه حسابداری   </title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  /* Base Styles */
+  :root {
+    --primary-color: #34495e; /* Dark Blue */
+    --accent-color: #1abc9c;  /* Turquoise */
+    --secondary-accent: #2ecc71; /* Emerald Green for success */
+    --danger-color: #e74c3c; /* Alizarin Red for errors/delete */
+    --background-color: #f7f9fc;
+    --card-background: #ffffff;
+    --text-color: #333;
+    --light-text-color: #ecf0f1;
+    --border-color: #e0e0e0;
+    --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 6px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background: var(--background-color);
+    direction: rtl;
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-y: hidden; /* Prevent body scroll, main handles it */
+  }
+
+  /* Header */
+  header {
+    background: var(--primary-color);
+    color: var(--light-text-color);
+    padding: 20px 0;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-medium);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  /* Navigation */
+  nav {
+    display: flex;
+    background: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    box-shadow: var(--shadow-light);
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    position: sticky;
+    top: 80px; /* Below header */
+    z-index: 90;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--light-text-color);
+    padding: 15px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1; /* Distribute space evenly */
+    min-width: 120px; /* Prevent buttons from becoming too small */
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  nav button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 3px;
+    background: var(--accent-color);
+    transition: width 0.3s ease;
+  }
+
+  nav button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  nav button.active {
+    background: var(--accent-color);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  nav button.active::after {
+    width: 100%;
+    right: 0;
+  }
+
+  /* Main Content Area */
+  main {
+    padding: 25px;
+    max-width: 1280px;
+    margin: auto;
+    background: var(--background-color);
+    min-height: calc(100vh - 80px - 58px); /* Header + Nav height */
+    overflow-y: auto; /* Enable scrolling for main content */
+    height: calc(100vh - 80px - 58px); /* Fixed height for scrolling */
+  }
+
+  section {
+    display: none;
+    background: var(--card-background);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 25px;
+  }
+
+  section.active {
+    display: block;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3 {
+    font-size: 1.4rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+  }
+
+  /* Forms */
+  form {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fdfdfd;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    background-color: #fcfcfc;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  button.submit-btn {
+    grid-column: 1 / -1; /* Span full width */
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  button.submit-btn:hover {
+    background: #159a83;
+    transform: translateY(-2px);
+  }
+  button.submit-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: separate; /* Use separate for border-radius */
+    border-spacing: 0;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-light);
+    border-radius: 8px;
+    overflow: hidden; /* Ensures rounded corners apply to content */
+  }
+
+  table thead tr:first-child th:first-child { border-top-right-radius: 8px; }
+  table thead tr:first-child th:last-child { border-top-left-radius: 8px; }
+
+  table th, table td {
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    white-space: nowrap; /* Prevent wrapping in headers */
+  }
+
+  table td {
+    background: var(--card-background);
+  }
+
+  tr:nth-child(even) td {
+    background: #fdfdfd;
+  }
+
+  table tr:last-child td {
+    border-bottom: none;
+  }
+
+  table button {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 3px;
+    transition: background 0.3s ease;
+    font-size: 0.85rem;
+  }
+
+  table button.delete-btn {
+    background: var(--danger-color);
+  }
+
+  table button:hover {
+    opacity: 0.9;
+  }
+
+  /* Notification messages */
+  .message-box {
+    margin: 15px 0;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+  }
+  .message-box.success {
+    background: var(--secondary-accent);
+    color: white;
+  }
+  .message-box.error {
+    background: var(--danger-color);
+    color: white;
+  }
+
+  /* Autocomplete */
+  .autocomplete {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-background);
+    border-radius: 5px;
+    box-shadow: var(--shadow-light);
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+  }
+
+  .autocomplete-items div:hover {
+    background-color: #e9e9e9;
+  }
+
+  .autocomplete-active {
+    background-color: var(--accent-color) !important;
+    color: #ffffff;
+  }
+
+  /* Dashboard Specific Styles */
+  #dashboard .kpi-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  #dashboard .kpi-card {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-medium);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+  }
+  #dashboard .kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+  }
+
+  #dashboard .kpi-card .icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+
+  #dashboard .kpi-card h4 {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  #dashboard .kpi-card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+  #dashboard .kpi-card.income p { color: var(--secondary-accent); }
+  #dashboard .kpi-card.expense p { color: var(--danger-color); }
+  #dashboard .kpi-card.profit p { color: #28a745; } /* Darker green for profit */
+  #dashboard .kpi-card.inventory p { color: #007bff; } /* Blue for inventory */
+
+
+  #dashboard .chart-container {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 30px;
+  }
+
+  #dashboard .recent-activities {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+  }
+  #dashboard .recent-activities ul {
+    list-style: none;
+    padding: 0;
+  }
+  #dashboard .recent-activities ul li {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border-color);
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  #dashboard .recent-activities ul li:last-child {
+    border-bottom: none;
+  }
+  #dashboard .recent-activities .activity-type {
+    font-weight: 600;
+    min-width: 80px;
+  }
+  #dashboard .recent-activities .activity-date {
+    font-size: 0.85rem;
+    color: #888;
+    min-width: 80px;
+    text-align: left;
+  }
+  #dashboard .recent-activities .activity-detail {
+    flex-grow: 1;
+  }
+  #dashboard .recent-activities .activity-amount {
+    font-weight: 600;
+    min-width: 100px;
+    text-align: left;
+  }
+  .activity-type.sale { color: var(--secondary-accent); }
+  .activity-type.purchase { color: var(--danger-color); }
+  .activity-type.return { color: #f39c12; } /* Orange */
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    nav {
+      flex-direction: column;
+      top: 60px; /* Adjust if header height changes */
+    }
+    nav button {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      flex: none;
+      width: 100%;
+    }
+    header {
+      font-size: 1.4rem;
+      padding: 15px 0;
+    }
+    main {
+      padding: 15px;
+    }
+    section {
+      padding: 15px;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    form {
+      grid-template-columns: 1fr; /* Stack inputs on small screens */
+      padding: 15px;
+    }
+    table thead {
+      display: none; /* Hide table headers on small screens */
+    }
+    table, table tbody, table tr, table td {
+      display: block;
+      width: 100%;
+    }
+    table tr {
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: var(--shadow-light);
+    }
+    table td {
+      text-align: right;
+      padding-left: 50%;
+      position: relative;
+      border: none;
+    }
+    table td::before {
+      content: attr(data-label);
+      position: absolute;
+      right: 15px;
+      width: 45%;
+      text-align: right;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    table tr:nth-child(even) td {
+      background: var(--card-background); /* Override zebra for mobile */
+    }
+  }
+
+  @media (max-width: 480px) {
+    header {
+      font-size: 1.2rem;
+    }
+    nav button {
+      font-size: 0.9rem;
+      padding: 12px 8px;
+    }
+    #dashboard .kpi-cards {
+      grid-template-columns: 1fr; /* Stack KPIs on very small screens */
+    }
+  }
+</style>
+</head>
+<body>
+
+<header><i class="fas fa-chart-line"></i>   سامانه حسابداری</header>
+
+<nav aria-label="تنظیمات منو">
+  <button class="active" data-section="dashboard"><i class="fas fa-home"></i> داشبورد</button>
+  <button data-section="sales"><i class="fas fa-file-invoice-dollar"></i> فاکتورهای فروش</button>
+  <button data-section="purchases"><i class="fas fa-shopping-basket"></i> فاکتورهای خرید</button>
+  <button data-section="inventory"><i class="fas fa-warehouse"></i> انبار و موجودی</button>
+  <button data-section="customers"><i class="fas fa-users"></i> مشتریان و تامین‌کنندگان</button>
+  <button data-section="returns"><i class="fas fa-undo-alt"></i> کالاهای مرجوعی</button>
+  <button data-section="checks"><i class="fas fa-money-check-alt"></i> چک‌ها</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="active" aria-label="داشبورد">
+  <h2><i class="fas fa-tachometer-alt"></i> داشبورد</h2>
+  <div class="kpi-cards">
+    <div class="kpi-card income">
+      <div class="icon"><i class="fas fa-arrow-up"></i></div>
+      <h4>درآمد کل</h4>
+      <p id="totalIncome">۰ ریال</p>
+    </div>
+    <div class="kpi-card expense">
+      <div class="icon"><i class="fas fa-arrow-down"></i></div>
+      <h4>هزینه کل</h4>
+      <p id="totalExpenses">۰ ریال</p>
+    </div>
+    <div class="kpi-card profit">
+      <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+      <h4>سود خالص</h4>
+      <p id="netProfit">۰ ریال</p>
+    </div>
+    <div class="kpi-card inventory">
+      <div class="icon"><i class="fas fa-box-open"></i></div>
+      <h4>ارزش کل انبار</h4>
+      <p id="totalInventoryValue">۰ ریال</p>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <h3><i class="fas fa-chart-bar"></i> وضعیت موجودی انبار (۵ محصول با کمترین موجودی)</h3>
+    <canvas id="lowStockChart"></canvas>
+  </div>
+
+  <div class="recent-activities">
+    <h3><i class="fas fa-history"></i> آخرین فعالیت‌ها</h3>
+    <ul id="recentActivitiesList">
+      <li>فعالیتی یافت نشد.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="sales" aria-label="فاکتورهای فروش">
+  <h2><i class="fas fa-file-invoice-dollar"></i> فاکتورهای فروش</h2>
+  <form id="salesInvoiceForm" aria-describedby="salesdesc">
+    <div id="message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="salesdesc">اطلاعات فاکتور فروش را وارد نمایید</p>
+
+    <div class="form-group">
+        <label for="sales-customer">مشتری:</label>
+        <select id="sales-customer" required></select>
+    </div>
+
+    <div class="form-group autocomplete">
+      <label for="sales-product">محصول:</label>
+      <input id="sales-product" type="text" placeholder="نام محصول را انتخاب کنید..." autocomplete="off" required />
+      <input type="hidden" id="sales-product-id" />
+    </div>
+
+    <div class="form-group">
+        <label for="sales-quantity">تعداد / مقدار:</label>
+        <input id="sales-quantity" type="number" min="0.01" step="any" placeholder="مثلاً 1 یا 0.5" required />
+    </div>
+
+    <div class="form-group">
+        <label for="sales-unit-price">قیمت واحد (ریال):</label>
+        <input id="sales-unit-price" type="number" min="0" readonly required />
+    </div>
+
+    <div class="form-group">
+        <label for="sales-discount">تخفیف (ریال):</label>
+        <input id="sales-discount" type="number" min="0" value="0" />
+    </div>
+
+    <div class="form-group">
+        <label for="sales-date">تاریخ فاکتور:</label>
+        <input id="sales-date" type="date" required />
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> ثبت فاکتور فروش</button>
+  </form>
+
+  <h3><i class="fas fa-list-alt"></i> فاکتورهای فروش ثبت شده</h3>
+  <table id="salesTable" aria-label="فاکتورهای فروش">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>شماره فاکتور</th>
+        <th>مشتری</th>
+        <th>محصول</th>
+        <th>تعداد</th>
+        <th>قیمت واحد (ریال)</th>
+        <th>تخفیف (ریال)</th>
+        <th>قیمت کل (ریال)</th>
+        <th>تاریخ</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="purchases" aria-label="فاکتورهای خرید">
+  <h2><i class="fas fa-shopping-basket"></i> فاکتورهای خرید</h2>
+  <form id="purchaseInvoiceForm" aria-describedby="purchasedesc">
+    <div id="purchase-message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="purchasedesc">اطلاعات فاکتور خرید را وارد نمایید</p>
+
+    <div class="form-group">
+        <label for="purchase-supplier">تامین‌کننده:</label>
+        <select id="purchase-supplier" required></select>
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-product-name">نام محصول:</label>
+        <input id="purchase-product-name" type="text" placeholder="نام محصول جدید یا موجود" required />
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-product-unit">واحد اندازه‌گیری:</label>
+        <select id="purchase-product-unit" required>
+            <option value="عدد">عدد</option>
+            <option value="کیلوگرم">کیلوگرم</option>
+            <option value="متر">متر</option>
+            <option value="لیتر">لیتر</option>
+            <option value="بسته">بسته</option>
+            <option value="کارتن">کارتن</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-price-buy">قیمت خرید واحد (ریال):</label>
+        <input id="purchase-price-buy" type="number" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-price-sell">قیمت فروش واحد (ریال):</label>
+        <input id="purchase-price-sell" type="number" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-quantity">تعداد / مقدار:</label>
+        <input id="purchase-quantity" type="number" min="0.01" step="any" required />
+    </div>
+
+    <div class="form-group">
+        <label for="purchase-date">تاریخ فاکتور:</label>
+        <input id="purchase-date" type="date" required />
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> ثبت فاکتور خرید</button>
+  </form>
+
+  <h3><i class="fas fa-list-alt"></i> فاکتورهای خرید ثبت شده</h3>
+  <table id="purchaseTable" aria-label="فاکتورهای خرید">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>شماره فاکتور</th>
+        <th>تامین‌کننده</th>
+        <th>محصول</th>
+        <th>واحد</th>
+        <th>تعداد</th>
+        <th>قیمت خرید واحد (ریال)</th>
+        <th>قیمت فروش واحد (ریال)</th>
+        <th>قیمت کل (ریال)</th>
+        <th>تاریخ</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="inventory" aria-label="انبار و موجودی">
+  <h2><i class="fas fa-warehouse"></i> انبار و موجودی</h2>
+  <form id="inventoryForm" aria-describedby="inventorydesc">
+    <div id="inventory-message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="inventorydesc">ثبت محصول جدید یا ویرایش محصول موجود</p>
+
+    <div class="form-group">
+        <label for="product-name">نام محصول:</label>
+        <input id="product-name" type="text" required />
+    </div>
+
+    <div class="form-group">
+        <label for="product-unit">واحد اندازه‌گیری:</label>
+        <select id="product-unit" required>
+            <option value="عدد">عدد</option>
+            <option value="کیلوگرم">کیلوگرم</option>
+            <option value="متر">متر</option>
+            <option value="لیتر">لیتر</option>
+            <option value="بسته">بسته</option>
+            <option value="کارتن">کارتن</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="product-price-buy">قیمت خرید واحد (ریال):</label>
+        <input id="product-price-buy" type="number" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label for="product-price-sell">قیمت فروش واحد (ریال):</label>
+        <input id="product-price-sell" type="number" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label for="product-stock">موجودی اولیه:</label>
+        <input id="product-stock" type="number" min="0" step="any" required />
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-save"></i> ثبت/ویرایش محصول</button>
+  </form>
+
+  <h3><i class="fas fa-box"></i> محصولات موجود در انبار</h3>
+  <table id="inventoryTable" aria-label="محصولات انبار">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>کد محصول</th>
+        <th>نام محصول</th>
+        <th>واحد</th>
+        <th>قیمت خرید (ریال)</th>
+        <th>قیمت فروش (ریال)</th>
+        <th>موجودی</th>
+        <th>ارزش کل موجودی (ریال)</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="customers" aria-label="مشتریان و تامین‌کنندگان">
+  <h2><i class="fas fa-users"></i> مشتریان و تامین‌کنندگان</h2>
+
+  <form id="customerSupplierForm" aria-describedby="custsuppdesc">
+    <div id="custsupp-message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="custsuppdesc">ثبت یا ویرایش مشتری یا تامین‌کننده</p>
+
+    <div class="form-group">
+        <label for="cs-type">نوع:</label>
+        <select id="cs-type" required>
+            <option value="customer">مشتری</option>
+            <option value="supplier">تامین‌کننده</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="cs-name">نام:</label>
+        <input id="cs-name" type="text" required />
+    </div>
+
+    <div class="form-group">
+        <label for="cs-phone">تلفن:</label>
+        <input id="cs-phone" type="tel" placeholder="مثال: 09121234567" />
+    </div>
+
+    <div class="form-group" style="grid-column: 1 / -1;">
+        <label for="cs-address">آدرس:</label>
+        <textarea id="cs-address" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-user-plus"></i> ثبت/ویرایش</button>
+  </form>
+
+  <h3><i class="fas fa-address-book"></i> لیست مشتریان و تامین‌کنندگان</h3>
+  <table id="csTable" aria-label="لیست مشتریان و تامین‌کنندگان">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>کد</th>
+        <th>نوع</th>
+        <th>نام</th>
+        <th>تلفن</th>
+        <th>آدرس</th>
+        <th>وضعیت حساب (ریال)</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="returns" aria-label="کالاهای مرجوعی">
+  <h2><i class="fas fa-undo-alt"></i> کالاهای مرجوعی</h2>
+  <form id="returnForm" aria-describedby="returndesc">
+    <div id="return-message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="returndesc">ثبت کالای مرجوعی</p>
+
+    <div class="form-group">
+        <label for="return-invoice-type">نوع فاکتور:</label>
+        <select id="return-invoice-type" required>
+            <option value="sale">فروش</option>
+            <option value="purchase">خرید</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="return-invoice">انتخاب فاکتور:</label>
+        <select id="return-invoice" required></select>
+    </div>
+
+    <div class="form-group autocomplete">
+      <label for="return-product">محصول:</label>
+      <input id="return-product" type="text" placeholder="نام محصول را انتخاب کنید..." autocomplete="off" required />
+      <input type="hidden" id="return-product-id" />
+    </div>
+
+    <div class="form-group">
+        <label for="return-quantity">تعداد / مقدار برگشتی:</label>
+        <input id="return-quantity" type="number" min="0.01" step="any" required />
+    </div>
+
+    <div class="form-group">
+        <label for="return-date">تاریخ بازگشت:</label>
+        <input id="return-date" type="date" required />
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-exchange-alt"></i> ثبت کالای مرجوعی</button>
+  </form>
+
+  <h3><i class="fas fa-list"></i> کالاهای مرجوعی ثبت شده</h3>
+  <table id="returnTable" aria-label="کالاهای مرجوعی">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>شماره مرجوعی</th>
+        <th>نوع فاکتور</th>
+        <th>شماره فاکتور</th>
+        <th>محصول</th>
+        <th>تعداد برگشتی</th>
+        <th>تاریخ</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="checks" aria-label="چک‌ها">
+  <h2><i class="fas fa-money-check-alt"></i> چک‌ها</h2>
+  <form id="checkForm" aria-describedby="checkdesc">
+    <div id="check-message" class="message-box" role="alert" aria-live="polite"></div>
+    <p id="checkdesc">ثبت چک جدید</p>
+
+    <div class="form-group">
+        <label for="check-number">شماره چک:</label>
+        <input id="check-number" type="text" required />
+    </div>
+
+    <div class="form-group">
+        <label for="check-owner">صاحب چک:</label>
+        <input id="check-owner" type="text" required />
+    </div>
+
+    <div class="form-group">
+        <label for="check-amount">مبلغ (ریال):</label>
+        <input id="check-amount" type="number" min="0" required />
+    </div>
+
+    <div class="form-group">
+        <label for="check-date">تاریخ سررسید:</label>
+        <input id="check-date" type="date" required />
+    </div>
+
+    <div class="form-group">
+        <label for="check-status">وضعیت:</label>
+        <select id="check-status" required>
+            <option value="pending">در انتظار</option>
+            <option value="cleared">وصول شده</option>
+            <option value="bounced">برگشت خورده</option>
+        </select>
+    </div>
+
+    <button type="submit" class="submit-btn"><i class="fas fa-plus-circle"></i> ثبت چک</button>
+  </form>
+
+  <h3><i class="fas fa-clipboard-list"></i> لیست چک‌ها</h3>
+  <table id="checkTable" aria-label="لیست چک‌ها">
+    <thead>
+      <tr>
+        <th>ردیف</th>
+        <th>شماره چک</th>
+        <th>صاحب چک</th>
+        <th>مبلغ (ریال)</th>
+        <th>تاریخ سررسید</th>
+        <th>وضعیت</th>
+        <th>اقدامات</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+</main>
+
+<script>
+  // Data keys
+  const STORAGE_KEYS = {
+    inventory: 'offline_inventory',
+    customersSuppliers: 'offline_customersSuppliers',
+    salesInvoices: 'offline_salesInvoices',
+    purchaseInvoices: 'offline_purchaseInvoices',
+    returns: 'offline_returns',
+    checks: 'offline_checks'
+  };
+
+  // Variables to hold data in memory
+  let inventory = [];
+  let customersSuppliers = [];
+  let salesInvoices = [];
+  let purchaseInvoices = [];
+  let returnsData = [];
+  let checksData = [];
+
+  // Chart.js instances
+  let incomeExpenseChartInstance = null;
+  let lowStockChartInstance = null;
+
+  // Util: Save to localStorage
+  function saveData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  // Util: Load from localStorage
+  function loadData(key) {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  }
+
+  // Initial load
+  function loadAllData() {
+    inventory = loadData(STORAGE_KEYS.inventory);
+    customersSuppliers = loadData(STORAGE_KEYS.customersSuppliers);
+    salesInvoices = loadData(STORAGE_KEYS.salesInvoices);
+    purchaseInvoices = loadData(STORAGE_KEYS.purchaseInvoices);
+    returnsData = loadData(STORAGE_KEYS.returns);
+    checksData = loadData(STORAGE_KEYS.checks);
+  }
+
+  // Save all data
+  function saveAllData() {
+    saveData(STORAGE_KEYS.inventory, inventory);
+    saveData(STORAGE_KEYS.customersSuppliers, customersSuppliers);
+    saveData(STORAGE_KEYS.salesInvoices, salesInvoices);
+    saveData(STORAGE_KEYS.purchaseInvoices, purchaseInvoices);
+    saveData(STORAGE_KEYS.returns, returnsData);
+    saveData(STORAGE_KEYS.checks, checksData);
+  }
+
+  // Generate ID helper
+  function generateId(prefix='id') {
+    return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  // Format currency number with thousand separators
+  function formatCurrency(num) {
+    if (isNaN(num)) return '۰';
+    return num.toLocaleString('fa-IR');
+  }
+
+  // Format date to Persian
+  function formatPersianDate(dateStr) {
+    if (!dateStr) return '';
+    const dt = new Date(dateStr);
+    if (isNaN(dt)) return '';
+    return dt.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+
+  // ===== NAVIGATION =====
+  const navButtons = document.querySelectorAll('nav button');
+  const sections = document.querySelectorAll('main section');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const secId = btn.getAttribute('data-section');
+      sections.forEach(sec => {
+        if (sec.id === secId) sec.classList.add('active');
+        else sec.classList.remove('active');
+      });
+      // Render content for the active section
+      switch(secId) {
+        case 'dashboard': renderDashboard(); break;
+        case 'inventory': renderInventoryTable(); break;
+        case 'customers': renderCSList(); break;
+        case 'sales': renderSalesTable(); loadSalesCustomers(); refreshProductAutocomplete(); break;
+        case 'purchases': renderPurchaseTable(); loadPurchaseSuppliers(); break;
+        case 'returns': renderReturnTable(); loadReturnsInvoiceOptions(); break;
+        case 'checks': renderCheckTable(); break;
+      }
+    });
+  });
+
+  // ===== DASHBOARD =====
+  function renderDashboard() {
+    // Calculate KPIs
+    const totalIncome = salesInvoices.reduce((sum, inv) => sum + Math.max(0, (inv.unitPrice * inv.quantity - inv.discount)), 0);
+    const totalExpenses = purchaseInvoices.reduce((sum, inv) => sum + (inv.unitPrice * inv.quantity), 0);
+    const netProfit = totalIncome - totalExpenses;
+    const totalInventoryValue = inventory.reduce((sum, p) => sum + (p.stock * p.priceBuy), 0); // Using purchase price for inventory value
+
+    document.getElementById('totalIncome').textContent = formatCurrency(totalIncome) + ' ریال';
+    document.getElementById('totalExpenses').textContent = formatCurrency(totalExpenses) + ' ریال';
+    document.getElementById('netProfit').textContent = formatCurrency(netProfit) + ' ریال';
+    document.getElementById('totalInventoryValue').textContent = formatCurrency(totalInventoryValue) + ' ریال';
+    
+    renderIncomeExpenseChart();
+    renderLowStockChart();
+    renderRecentActivities();
+  }
+
+  function renderIncomeExpenseChart() {
+    const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+    
+    // Prepare monthly data for past 6 months
+    const months = [];
+    const incomeData = [];
+    const expenseData = [];
+    const now = new Date();
+
+    for(let i=5; i>=0; i--) {
+      let d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      const label = d.toLocaleDateString('fa-IR', {month: 'short', year:'numeric'});
+      months.push(label);
+
+      const monthIncome = salesInvoices.filter(inv => {
+        const invDate = new Date(inv.date);
+        return invDate.getFullYear() === d.getFullYear() && invDate.getMonth() === d.getMonth();
+      }).reduce((sum, inv) => sum + Math.max(0, (inv.unitPrice * inv.quantity - inv.discount)), 0);
+
+      const monthExpense = purchaseInvoices.filter(inv => {
+        const invDate = new Date(inv.date);
+        return invDate.getFullYear() === d.getFullYear() && invDate.getMonth() === d.getMonth();
+      }).reduce((sum, inv) => sum + (inv.unitPrice * inv.quantity), 0);
+
+      incomeData.push(monthIncome);
+      expenseData.push(monthExpense);
+    }
+
+    if (incomeExpenseChartInstance) {
+        incomeExpenseChartInstance.destroy();
+    }
+
+    incomeExpenseChartInstance = new Chart(ctx, {
+      type: 'line', // Changed to line chart
+      data: {
+        labels: months,
+        datasets: [
+          {
+            label: 'درآمد (ریال)',
+            data: incomeData,
+            backgroundColor: 'rgba(46, 204, 113, 0.2)', // Emerald Green light fill
+            borderColor: 'rgba(46, 204, 113, 1)',
+            borderWidth: 2,
+            tension: 0.3, // Smooth lines
+            fill: true,
+            pointBackgroundColor: 'rgba(46, 204, 113, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: 'rgba(46, 204, 113, 1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+          },
+          {
+            label: 'هزینه (ریال)',
+            data: expenseData,
+            backgroundColor: 'rgba(231, 76, 60, 0.2)', // Alizarin Red light fill
+            borderColor: 'rgba(231, 76, 60, 1)',
+            borderWidth: 2,
+            tension: 0.3, // Smooth lines
+            fill: true,
+            pointBackgroundColor: 'rgba(231, 76, 60, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: 'rgba(231, 76, 60, 1)',
+            pointHoverBorderColor: 'rgba(220,220,220,1)',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+                font: {
+                    family: 'Vazirmatn'
+                }
+            }
+          },
+          tooltip: {
+            rtl: true,
+            titleFont: { family: 'Vazirmatn' },
+            bodyFont: { family: 'Vazirmatn' },
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += formatCurrency(context.parsed.y) + ' ریال';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return formatCurrency(value);
+              },
+              font: {
+                family: 'Vazirmatn'
+              }
+            },
+            title: {
+              display: true,
+              text: 'مبلغ (ریال)',
+              font: {
+                family: 'Vazirmatn',
+                size: 14
+              }
+            }
+          },
+          x: {
+            ticks: {
+              font: {
+                family: 'Vazirmatn'
+              }
+            },
+            title: {
+              display: true,
+              text: 'ماه',
+              font: {
+                family: 'Vazirmatn',
+                size: 14
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderLowStockChart() {
+    const ctx = document.getElementById('lowStockChart').getContext('2d');
+    
+    // Sort inventory by stock and get top 5 lowest
+    const sortedProducts = [...inventory].sort((a, b) => a.stock - b.stock);
+    const lowStockProducts = sortedProducts.slice(0, 5);
+
+    const productNames = lowStockProducts.map(p => p.name);
+    const productStocks = lowStockProducts.map(p => p.stock);
+    const backgroundColors = [
+      'rgba(255, 99, 132, 0.8)', // Red
+      'rgba(54, 162, 235, 0.8)', // Blue
+      'rgba(255, 206, 86, 0.8)', // Yellow
+      'rgba(75, 192, 192, 0.8)', // Green
+      'rgba(153, 102, 255, 0.8)'  // Purple
+    ];
+    const borderColors = [
+      'rgba(255, 99, 132, 1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)'
+    ];
+
+    if (lowStockChartInstance) {
+        lowStockChartInstance.destroy();
+    }
+
+    lowStockChartInstance = new Chart(ctx, {
+      type: 'bar', // Changed to bar chart (column)
+      data: {
+        labels: productNames,
+        datasets: [{
+          label: 'موجودی',
+          data: productStocks,
+          backgroundColor: backgroundColors.slice(0, lowStockProducts.length),
+          borderColor: borderColors.slice(0, lowStockProducts.length),
+          borderWidth: 1,
+          borderRadius: 5,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+                font: {
+                    family: 'Vazirmatn'
+                }
+            }
+          },
+          tooltip: {
+            rtl: true,
+            titleFont: { family: 'Vazirmatn' },
+            bodyFont: { family: 'Vazirmatn' },
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += context.parsed.y + ' عدد';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              font: {
+                family: 'Vazirmatn'
+              }
+            },
+            title: {
+              display: true,
+              text: 'تعداد موجودی',
+              font: {
+                family: 'Vazirmatn',
+                size: 14
+              }
+            }
+          },
+          x: {
+            ticks: {
+              font: {
+                family: 'Vazirmatn'
+              }
+            },
+            title: {
+              display: true,
+              text: 'نام محصول',
+              font: {
+                family: 'Vazirmatn',
+                size: 14
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderRecentActivities() {
+    const activityListEl = document.getElementById('recentActivitiesList');
+    activityListEl.innerHTML = '';
+
+    const activities = [];
+
+    // Add sales activities
+    salesInvoices.forEach(inv => {
+      const customer = customersSuppliers.find(c => c.id === inv.customerId);
+      const product = inventory.find(p => p.id === inv.productId);
+      activities.push({
+        type: 'sale',
+        date: new Date(inv.date),
+        detail: `${customer ? customer.name : 'مشتری نامعلوم'} - ${product ? product.name : 'محصول نامعلوم'} (${inv.quantity})`,
+        amount: Math.max(0, inv.unitPrice * inv.quantity - inv.discount)
+      });
+    });
+
+    // Add purchase activities
+    purchaseInvoices.forEach(inv => {
+      const supplier = customersSuppliers.find(c => c.id === inv.supplierId);
+      const product = inventory.find(p => p.id === inv.productId);
+      activities.push({
+        type: 'purchase',
+        date: new Date(inv.date),
+        detail: `${supplier ? supplier.name : 'تامین‌کننده نامعلوم'} - ${product ? product.name : 'محصول نامعلوم'} (${inv.quantity})`,
+        amount: inv.unitPrice * inv.quantity
+      });
+    });
+
+    // Add return activities
+    returnsData.forEach(ret => {
+      const product = inventory.find(p => p.id === ret.productId);
+      const typeText = ret.invoiceType === 'sale' ? 'مرجوعی فروش' : 'مرجوعی خرید';
+      activities.push({
+        type: 'return',
+        date: new Date(ret.date),
+        detail: `${typeText} - ${product ? product.name : 'محصول نامعلوم'} (${ret.quantity})`,
+        amount: ret.unitPrice * ret.quantity
+      });
+    });
+
+    // Sort activities by date, descending
+    activities.sort((a, b) => b.date - a.date);
+
+    // Display top 10 recent activities
+    const displayCount = Math.min(activities.length, 10);
+    if (displayCount === 0) {
+        activityListEl.innerHTML = '<li>فعالیتی یافت نشد.</li>';
+        return;
+    }
+    
+    for (let i = 0; i < displayCount; i++) {
+        const activity = activities[i];
+        const li = document.createElement('li');
+        let typeClass = '';
+        let typeLabel = '';
+        if (activity.type === 'sale') {
+            typeClass = 'sale';
+            typeLabel = 'فروش';
+        } else if (activity.type === 'purchase') {
+            typeClass = 'purchase';
+            typeLabel = 'خرید';
+        } else if (activity.type === 'return') {
+            typeClass = 'return';
+            typeLabel = 'مرجوعی';
+        }
+
+        li.innerHTML = `
+            <span class="activity-type ${typeClass}">${typeLabel}</span>
+            <span class="activity-detail">${activity.detail}</span>
+            <span class="activity-amount">${formatCurrency(activity.amount)} ریال</span>
+            <span class="activity-date">${formatPersianDate(activity.date.toISOString().substr(0,10))}</span>
+        `;
+        activityListEl.appendChild(li);
+    }
+  }
+
+
+  // ===== INVENTORY =====
+  const inventoryForm = document.getElementById('inventoryForm');
+  const inventoryTableBody = document.querySelector('#inventoryTable tbody');
+  let editingProductId = null;
+
+  inventoryForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = inventoryForm['product-name'].value.trim();
+    const unit = inventoryForm['product-unit'].value;
+    const priceBuy = parseFloat(inventoryForm['product-price-buy'].value);
+    const priceSell = parseFloat(inventoryForm['product-price-sell'].value);
+    const stock = parseFloat(inventoryForm['product-stock'].value);
+    if (!name || isNaN(priceBuy) || isNaN(priceSell) || isNaN(stock)) {
+        return showInventoryMessage('لطفاً تمامی فیلدها را به درستی وارد کنید.', true);
+    }
+
+    if(editingProductId) {
+      // Edit existing
+      const idx = inventory.findIndex(p => p.id === editingProductId);
+      if(idx > -1) {
+        inventory[idx] = {id: editingProductId, name, unit, priceBuy, priceSell, stock};
+        editingProductId = null;
+        inventoryForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> ثبت/ویرایش محصول';
+      }
+    } else {
+      // Add new
+      if(inventory.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+        return showInventoryMessage('این محصول قبلاً ثبت شده است.', true);
+      }
+      inventory.push({id: generateId('prod'), name, unit, priceBuy, priceSell, stock});
+    }
+    saveData(STORAGE_KEYS.inventory, inventory);
+    renderInventoryTable();
+    inventoryForm.reset();
+    showInventoryMessage('محصول با موفقیت ثبت شد.');
+    renderDashboard(); // Update dashboard after inventory change
+  });
+
+  function renderInventoryTable() {
+    inventoryTableBody.innerHTML = '';
+    if (inventory.length === 0) {
+        inventoryTableBody.innerHTML = '<tr><td colspan="9">هیچ محصولی ثبت نشده است.</td></tr>';
+        return;
+    }
+    inventory.forEach((p, index) => {
+      const totalValue = p.stock * p.priceBuy;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="کد محصول">${p.id}</td>
+        <td data-label="نام محصول">${p.name}</td>
+        <td data-label="واحد">${p.unit}</td>
+        <td data-label="قیمت خرید (ریال)">${formatCurrency(p.priceBuy)}</td>
+        <td data-label="قیمت فروش (ریال)">${formatCurrency(p.priceSell)}</td>
+        <td data-label="موجودی">${p.stock}</td>
+        <td data-label="ارزش کل موجودی (ریال)">${formatCurrency(totalValue)}</td>
+        <td data-label="اقدامات">
+          <button type="button" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i> ویرایش</button>
+          <button type="button" class="delete-btn" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+        </td>
+      `;
+      inventoryTableBody.appendChild(tr);
+    });
+  }
+
+  function editProduct(id) {
+    const p = inventory.find(item => item.id === id);
+    if(!p) return;
+    editingProductId = id;
+    inventoryForm['product-name'].value = p.name;
+    inventoryForm['product-unit'].value = p.unit;
+    inventoryForm['product-price-buy'].value = p.priceBuy;
+    inventoryForm['product-price-sell'].value = p.priceSell;
+    inventoryForm['product-stock'].value = p.stock;
+    inventoryForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> ذخیره تغییرات';
+  }
+
+  function deleteProduct(id) {
+    if(!confirm('از حذف این محصول اطمینان دارید؟ این عمل قابل برگشت نیست.')) return;
+    inventory = inventory.filter(p => p.id !== id);
+    saveData(STORAGE_KEYS.inventory, inventory);
+    renderInventoryTable();
+    renderDashboard(); // Update dashboard after inventory change
+    showInventoryMessage('محصول با موفقیت حذف شد.');
+  }
+
+  function showInventoryMessage(msg, error = false) {
+    const el = document.getElementById('inventory-message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  // ===== CUSTOMERS & SUPPLIERS =====
+  const csForm = document.getElementById('customerSupplierForm');
+  const csTableBody = document.querySelector('#csTable tbody');
+  let editingCSId = null;
+
+  csForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const type = csForm['cs-type'].value;
+    const name = csForm['cs-name'].value.trim();
+    const phone = csForm['cs-phone'].value.trim();
+    const address = csForm['cs-address'].value.trim();
+
+    if(!name) return showCSMessage('نام را وارد کنید.', true);
+
+    if(editingCSId) {
+      const idx = customersSuppliers.findIndex(c => c.id === editingCSId);
+      if(idx>-1) {
+        customersSuppliers[idx] = {id: editingCSId, type, name, phone, address};
+        editingCSId = null;
+        csForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-user-plus"></i> ثبت/ویرایش';
+      }
+    } else {
+      if(customersSuppliers.find(c => c.name.toLowerCase() === name.toLowerCase() && c.type === type)) {
+        return showCSMessage('این نام قبلاً با همین نوع ثبت شده است.', true);
+      }
+      customersSuppliers.push({id: generateId('cs'), type, name, phone, address});
+    }
+    saveData(STORAGE_KEYS.customersSuppliers, customersSuppliers);
+    renderCSList();
+    csForm.reset();
+    showCSMessage('ثبت با موفقیت انجام شد.');
+  });
+
+  function renderCSList() {
+    csTableBody.innerHTML = '';
+    if (customersSuppliers.length === 0) {
+        csTableBody.innerHTML = '<tr><td colspan="8">هیچ مشتری یا تامین‌کننده‌ای ثبت نشده است.</td></tr>';
+        return;
+    }
+    customersSuppliers.forEach((c, index)=> {
+      const balance = calculateCSBalance(c.id);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="کد">${c.id}</td>
+        <td data-label="نوع">${c.type === 'customer' ? 'مشتری' : 'تامین‌کننده'}</td>
+        <td data-label="نام">${c.name}</td>
+        <td data-label="تلفن">${c.phone || '-'}</td>
+        <td data-label="آدرس">${c.address || '-'}</td>
+        <td data-label="وضعیت حساب (ریال)">${formatCurrency(balance)}</td>
+        <td data-label="اقدامات">
+          <button type="button" onclick="editCS('${c.id}')"><i class="fas fa-edit"></i> ویرایش</button>
+          <button type="button" class="delete-btn" onclick="deleteCS('${c.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+        </td>
+      `;
+      csTableBody.appendChild(tr);
+    });
+  }
+
+  // Calculate customer or supplier balance = sum sales - sum purchases + sum sales returns - sum purchase returns
+  function calculateCSBalance(csId) {
+    const cs = customersSuppliers.find(c=> c.id===csId);
+    if(!cs) return 0;
+    let balance = 0;
+
+    if(cs.type==='customer') {
+      const salesTotal = salesInvoices.filter(inv=>inv.customerId === csId)
+        .reduce((s, inv)=> s + Math.max(0, inv.unitPrice*inv.quantity - inv.discount),0);
+      const returnsTotal = returnsData.filter(r=>r.invoiceType==='sale' && r.customerSupplierId === csId)
+        .reduce((s,r)=> s + r.quantity * r.unitPrice,0); // unitPrice was stored in return object
+
+      balance = salesTotal - returnsTotal;
+    } else { // supplier
+      const purchaseTotal = purchaseInvoices.filter(inv=>inv.supplierId === csId)
+        .reduce((s, inv)=> s + inv.unitPrice*inv.quantity,0);
+      const returnsTotal = returnsData.filter(r=>r.invoiceType==='purchase' && r.customerSupplierId === csId)
+        .reduce((s,r)=> s + r.quantity * r.unitPrice,0);
+
+      balance = returnsTotal - purchaseTotal; // Supplier balance: (money received for returns) - (money paid for purchases)
+    }
+    return balance;
+  }
+
+
+  function editCS(id) {
+    const cs = customersSuppliers.find(c=> c.id === id);
+    if(!cs) return;
+    editingCSId = id;
+    csForm['cs-type'].value = cs.type;
+    csForm['cs-name'].value = cs.name;
+    csForm['cs-phone'].value = cs.phone;
+    csForm['cs-address'].value = cs.address;
+    csForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> ذخیره تغییرات';
+  }
+  function deleteCS(id) {
+    if(!confirm('از حذف اطمینان دارید؟ این عمل قابل برگشت نیست.')) return;
+    // Check if customer/supplier is linked to any invoices
+    const isLinkedToSales = salesInvoices.some(inv => inv.customerId === id);
+    const isLinkedToPurchases = purchaseInvoices.some(inv => inv.supplierId === id);
+
+    if (isLinkedToSales || isLinkedToPurchases) {
+        return showCSMessage('این مشتری/تامین‌کننده به فاکتورهای موجود مرتبط است و قابل حذف نیست.', true);
+    }
+
+    customersSuppliers = customersSuppliers.filter(c=>c.id!==id);
+    saveData(STORAGE_KEYS.customersSuppliers, customersSuppliers);
+    renderCSList();
+    showCSMessage('مشتری/تامین‌کننده با موفقیت حذف شد.');
+  }
+  function showCSMessage(msg, error = false) {
+    const el = document.getElementById('custsupp-message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  // ===== AUTOCOMPLETE for product selection (Sales only) =====
+  function setupAutocomplete(inputEl, hiddenIdEl) {
+    let currentFocus;
+
+    const handler = function() {
+      let val = this.value;
+      closeAllLists(inputEl.parentNode); // Pass the parent node to close lists only related to this input
+      if(!val) return false;
+      currentFocus = -1;
+
+      const a = document.createElement('div');
+      a.setAttribute('class', 'autocomplete-items');
+      this.parentNode.appendChild(a);
+
+      const filteredItems = inventory.filter(item => item.name.toLowerCase().includes(val.toLowerCase()));
+      filteredItems.forEach(item => {
+        const itemDiv = document.createElement('div');
+        const boldPart = item.name.substr(0, val.length);
+        const restPart = item.name.substr(val.length);
+        itemDiv.innerHTML = `<strong>${boldPart}</strong>${restPart}`;
+        itemDiv.innerHTML += `<br><small>قیمت فروش: ${formatCurrency(item.priceSell)} ریال | موجودی: ${item.stock} ${item.unit}</small>`;
+        itemDiv.addEventListener('click', () => {
+          inputEl.value = item.name;
+          hiddenIdEl.value = item.id;
+          closeAllLists(inputEl.parentNode);
+          if(inputEl.id === 'sales-product'){
+            document.getElementById('sales-unit-price').value = item.priceSell;
+          }
+        });
+        a.appendChild(itemDiv);
+      });
+    };
+    
+    // Remove previous listener to prevent duplicates
+    inputEl.removeEventListener('input', inputEl._autocompleteHandler);
+    inputEl._autocompleteHandler = handler;
+    inputEl.addEventListener('input', handler);
+
+    // Keyboard navigation and closing logic (shared)
+    inputEl.removeEventListener('keydown', inputEl._autocompleteKeydownHandler);
+    inputEl._autocompleteKeydownHandler = function(e){
+      let x = this.parentNode.querySelector('.autocomplete-items');
+      if(x) x = x.getElementsByTagName('div');
+      if(e.keyCode == 40){ // Down arrow
+        currentFocus++;
+        addActive(x);
+      } else if(e.keyCode == 38){ // Up arrow
+        currentFocus--;
+        addActive(x);
+      } else if(e.keyCode == 13){ // Enter key
+        e.preventDefault();
+        if(currentFocus > -1){
+          if(x && x[currentFocus]) x[currentFocus].click();
+        }
+      }
+    };
+    inputEl.addEventListener('keydown', inputEl._autocompleteKeydownHandler);
+
+    function addActive(x) {
+      if(!x) return false;
+      removeActive(x);
+      if(currentFocus >= x.length) currentFocus = 0;
+      if(currentFocus < 0) currentFocus = x.length -1;
+      x[currentFocus].classList.add('autocomplete-active');
+    }
+    function removeActive(x) {
+      for(let i = 0; i < x.length; i++){
+        x[i].classList.remove('autocomplete-active');
+      }
+    }
+    function closeAllLists(exceptElement){
+      const items = document.querySelectorAll('.autocomplete-items');
+      items.forEach(item => {
+        if(item.parentNode !== exceptElement) { // Only close lists not belonging to the specific input's parent
+            item.parentNode.removeChild(item);
+        }
+      });
+    }
+    // Global click listener to close all lists (important for UX)
+    document.removeEventListener('click', document._autocompleteGlobalClickHandler); // Remove old listener
+    document._autocompleteGlobalClickHandler = function (e){
+        document.querySelectorAll('.autocomplete-items').forEach(item => {
+            if(!item.contains(e.target) && !inputEl.contains(e.target)) { // If click outside current input and its list
+                item.parentNode.removeChild(item);
+            }
+        });
+    };
+    document.addEventListener('click', document._autocompleteGlobalClickHandler);
+  }
+
+
+  // Setup product autocomplete inputs for sales form only
+  function refreshProductAutocomplete() {
+    setupAutocomplete(document.getElementById('sales-product'), document.getElementById('sales-product-id'));
+  }
+
+  // ===== SALES INVOICES =====
+  const salesForm = document.getElementById('salesInvoiceForm');
+  const salesTableBody = document.querySelector('#salesTable tbody');
+
+  salesForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const customerId = document.getElementById('sales-customer').value;
+    const productId = document.getElementById('sales-product-id').value;
+    const quantity = parseFloat(document.getElementById('sales-quantity').value);
+    const unitPrice = parseFloat(document.getElementById('sales-unit-price').value);
+    const discount = parseFloat(document.getElementById('sales-discount').value);
+    const date = document.getElementById('sales-date').value;
+
+    if(!customerId || !productId || isNaN(quantity) || isNaN(unitPrice) || isNaN(discount) || !date) {
+      return showSalesMessage('لطفا همه فیلدها را به درستی وارد کنید.', true);
+    }
+    if (quantity <= 0) {
+        return showSalesMessage('تعداد/مقدار باید بیشتر از صفر باشد.', true);
+    }
+    if (unitPrice < 0) {
+        return showSalesMessage('قیمت واحد نمی‌تواند منفی باشد.', true);
+    }
+    if (discount < 0) {
+        return showSalesMessage('تخفیف نمی‌تواند منفی باشد.', true);
+    }
+
+
+    const product = inventory.find(p => p.id === productId);
+    if(!product) {
+      return showSalesMessage('محصول انتخاب شده نامعتبر است.', true);
+    }
+    // Check stock availability
+    if(quantity > product.stock) {
+      return showSalesMessage(`موجودی محصول کافی نیست. موجودی فعلی: ${product.stock} ${product.unit}`, true);
+    }
+
+    // Prepare sales invoice object
+    const sale = {
+      id: generateId('sale'),
+      customerId,
+      productId,
+      quantity,
+      unitPrice,
+      discount,
+      date
+    };
+
+    // Reduce stock
+    product.stock -= quantity;
+
+    // Save data
+    salesInvoices.push(sale);
+    saveAllData();
+
+    renderSalesTable();
+    renderInventoryTable(); // Update inventory table to reflect stock changes
+    renderDashboard(); // Update dashboard with new financial data
+
+    salesForm.reset();
+    document.getElementById('sales-product-id').value = ''; // Clear hidden ID
+    document.getElementById('sales-unit-price').value = ''; // Clear readonly price
+    showSalesMessage('فاکتور فروش با موفقیت ثبت شد.');
+  });
+
+  function renderSalesTable() {
+    salesTableBody.innerHTML = '';
+    if (salesInvoices.length === 0) {
+        salesTableBody.innerHTML = '<tr><td colspan="10">هیچ فاکتور فروشی ثبت نشده است.</td></tr>';
+        return;
+    }
+    salesInvoices.forEach((sale, index) => {
+      const customer = customersSuppliers.find(c => c.id === sale.customerId);
+      const product = inventory.find(p => p.id === sale.productId);
+
+      const totalPrice = Math.max(0, sale.unitPrice * sale.quantity - sale.discount);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="شماره فاکتور">${sale.id}</td>
+        <td data-label="مشتری">${customer ? customer.name : '-'}</td>
+        <td data-label="محصول">${product ? product.name : '-'}</td>
+        <td data-label="تعداد">${sale.quantity} ${product ? product.unit : ''}</td>
+        <td data-label="قیمت واحد (ریال)">${formatCurrency(sale.unitPrice)}</td>
+        <td data-label="تخفیف (ریال)">${formatCurrency(sale.discount)}</td>
+        <td data-label="قیمت کل (ریال)">${formatCurrency(totalPrice)}</td>
+        <td data-label="تاریخ">${formatPersianDate(sale.date)}</td>
+        <td data-label="اقدامات">
+            <button type="button" class="delete-btn" onclick="deleteSale('${sale.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+        </td>
+      `;
+      salesTableBody.appendChild(tr);
+    });
+  }
+
+  function deleteSale(id) {
+    if (!confirm('آیا از حذف این فاکتور فروش اطمینان دارید؟ موجودی انبار بازگردانده می‌شود.')) return;
+
+    const saleToDelete = salesInvoices.find(s => s.id === id);
+    if (!saleToDelete) {
+        showSalesMessage('فاکتور یافت نشد.', true);
+        return;
+    }
+
+    // Restore stock
+    const product = inventory.find(p => p.id === saleToDelete.productId);
+    if (product) {
+        product.stock += saleToDelete.quantity;
+    }
+
+    salesInvoices = salesInvoices.filter(s => s.id !== id);
+    saveAllData();
+    renderSalesTable();
+    renderInventoryTable();
+    renderDashboard();
+    showSalesMessage('فاکتور فروش با موفقیت حذف شد و موجودی انبار به روز شد.');
+  }
+
+  function showSalesMessage(msg, error=false) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  function loadSalesCustomers() {
+    const select = document.getElementById('sales-customer');
+    select.innerHTML = '<option value="">انتخاب مشتری...</option>'; // Add a default option
+    const customers = customersSuppliers.filter(c => c.type === 'customer');
+    if (customers.length === 0) {
+        showSalesMessage('هنوز هیچ مشتری‌ای ثبت نشده است. لطفاً ابتدا در بخش "مشتریان و تامین‌کنندگان" مشتری ثبت کنید.', true);
+        return;
+    }
+    customers.forEach(c=> {
+      const option = document.createElement('option');
+      option.value = c.id;
+      option.textContent = c.name;
+      select.appendChild(option);
+    });
+  }
+
+  // ===== PURCHASE INVOICES (Updated) =====
+  const purchaseForm = document.getElementById('purchaseInvoiceForm');
+  const purchaseTableBody = document.querySelector('#purchaseTable tbody');
+
+  purchaseForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const supplierId = document.getElementById('purchase-supplier').value;
+    const productName = document.getElementById('purchase-product-name').value.trim();
+    const productUnit = document.getElementById('purchase-product-unit').value;
+    const purchasePriceBuy = parseFloat(document.getElementById('purchase-price-buy').value);
+    const purchasePriceSell = parseFloat(document.getElementById('purchase-price-sell').value);
+    const quantity = parseFloat(document.getElementById('purchase-quantity').value);
+    const date = document.getElementById('purchase-date').value;
+
+    if(!supplierId || !productName || !productUnit || isNaN(purchasePriceBuy) || isNaN(purchasePriceSell) || isNaN(quantity) || !date) {
+      return showPurchaseMessage('لطفا همه فیلدها را به درستی وارد کنید.', true);
+    }
+    if (quantity <= 0) {
+        return showPurchaseMessage('تعداد/مقدار باید بیشتر از صفر باشد.', true);
+    }
+    if (purchasePriceBuy < 0 || purchasePriceSell < 0) {
+        return showPurchaseMessage('قیمت‌ها نمی‌توانند منفی باشند.', true);
+    }
+
+    // Check if product already exists (case insensitive)
+    let product = inventory.find(p => p.name.toLowerCase() === productName.toLowerCase());
+
+    if(product) {
+      // Product exists: update stock & prices if needed
+      product.stock += quantity;
+      product.priceBuy = purchasePriceBuy; // Always update to latest purchase price
+      product.priceSell = purchasePriceSell; // Always update to latest sell price
+    } else {
+      // Add new product to inventory
+      product = {
+        id: generateId('prod'),
+        name: productName,
+        unit: productUnit,
+        priceBuy: purchasePriceBuy,
+        priceSell: purchasePriceSell,
+        stock: quantity
+      };
+      inventory.push(product);
+    }
+
+    // Create purchase invoice linked to product.id
+    const purchase = {
+      id: generateId('purchase'),
+      supplierId,
+      productId: product.id, // Link to the actual product ID
+      quantity,
+      unitPrice: purchasePriceBuy, // Unit price in purchase invoice is buy price
+      date
+    };
+
+    purchaseInvoices.push(purchase);
+
+    saveAllData();
+
+    renderPurchaseTable();
+    renderInventoryTable();
+    renderDashboard();
+
+    purchaseForm.reset();
+    showPurchaseMessage('فاکتور خرید با موفقیت ثبت شد.');
+  });
+
+  function renderPurchaseTable() {
+    purchaseTableBody.innerHTML = '';
+    if (purchaseInvoices.length === 0) {
+        purchaseTableBody.innerHTML = '<tr><td colspan="10">هیچ فاکتور خریدی ثبت نشده است.</td></tr>';
+        return;
+    }
+    purchaseInvoices.forEach((purchase, index) => {
+      const supplier = customersSuppliers.find(c => c.id === purchase.supplierId);
+      const product = inventory.find(p => p.id === purchase.productId);
+      const totalPrice = purchase.unitPrice * purchase.quantity;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="شماره فاکتور">${purchase.id}</td>
+        <td data-label="تامین‌کننده">${supplier ? supplier.name : '-'}</td>
+        <td data-label="محصول">${product ? product.name : '-'}</td>
+        <td data-label="واحد">${product ? product.unit : ''}</td>
+        <td data-label="تعداد">${purchase.quantity}</td>
+        <td data-label="قیمت خرید واحد (ریال)">${formatCurrency(purchase.unitPrice)}</td>
+        <td data-label="قیمت فروش واحد (ریال)">${product ? formatCurrency(product.priceSell) : '-'}</td>
+        <td data-label="قیمت کل (ریال)">${formatCurrency(totalPrice)}</td>
+        <td data-label="تاریخ">${formatPersianDate(purchase.date)}</td>
+        <td data-label="اقدامات">
+            <button type="button" class="delete-btn" onclick="deletePurchase('${purchase.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+        </td>
+      `;
+      purchaseTableBody.appendChild(tr);
+    });
+  }
+
+  function deletePurchase(id) {
+    if (!confirm('آیا از حذف این فاکتور خرید اطمینان دارید؟ موجودی انبار کاهش می‌یابد.')) return;
+
+    const purchaseToDelete = purchaseInvoices.find(p => p.id === id);
+    if (!purchaseToDelete) {
+        showPurchaseMessage('فاکتور یافت نشد.', true);
+        return;
+    }
+
+    // Reduce stock
+    const product = inventory.find(p => p.id === purchaseToDelete.productId);
+    if (product) {
+        product.stock -= purchaseToDelete.quantity;
+        if (product.stock < 0) product.stock = 0; // Prevent negative stock
+    }
+
+    purchaseInvoices = purchaseInvoices.filter(p => p.id !== id);
+    saveAllData();
+    renderPurchaseTable();
+    renderInventoryTable();
+    renderDashboard();
+    showPurchaseMessage('فاکتور خرید با موفقیت حذف شد و موجودی انبار به روز شد.');
+  }
+
+  function showPurchaseMessage(msg, error=false) {
+    const el = document.getElementById('purchase-message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  function loadPurchaseSuppliers() {
+    const select = document.getElementById('purchase-supplier');
+    select.innerHTML = '<option value="">انتخاب تامین‌کننده...</option>'; // Add a default option
+    const suppliers = customersSuppliers.filter(c => c.type === 'supplier');
+    if (suppliers.length === 0) {
+        showPurchaseMessage('هنوز هیچ تامین‌کننده‌ای ثبت نشده است. لطفاً ابتدا در بخش "مشتریان و تامین‌کنندگان" تامین‌کننده ثبت کنید.', true);
+        return;
+    }
+    suppliers.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c.id;
+      option.textContent = c.name;
+      select.appendChild(option);
+    });
+  }
+
+  // ===== RETURNS =====
+  const returnForm = document.getElementById('returnForm');
+  const returnTableBody = document.querySelector('#returnTable tbody');
+
+  returnForm['return-invoice-type'].addEventListener('change', () => {
+    loadReturnsInvoiceOptions();
+    // Clear product selection when invoice type changes
+    document.getElementById('return-product').value = '';
+    document.getElementById('return-product-id').value = '';
+  });
+
+  returnForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const invoiceType = returnForm['return-invoice-type'].value;
+    const invoiceId = returnForm['return-invoice'].value;
+    const productId = returnForm['return-product-id'].value;
+    const quantity = parseFloat(returnForm['return-quantity'].value);
+    const date = returnForm['return-date'].value;
+
+    if(!invoiceType || !invoiceId || !productId || isNaN(quantity) || !date) {
+      return showReturnMessage('لطفاً همه فیلدها را به درستی وارد کنید.', true);
+    }
+    if (quantity <= 0) {
+        return showReturnMessage('تعداد/مقدار برگشتی باید بیشتر از صفر باشد.', true);
+    }
+
+    // Find invoice
+    let originalInvoice;
+    if(invoiceType === 'sale') {
+      originalInvoice = salesInvoices.find(i => i.id === invoiceId);
+    } else { // purchase
+      originalInvoice = purchaseInvoices.find(i => i.id === invoiceId);
+    }
+    
+    if(!originalInvoice) {
+      return showReturnMessage('فاکتور مورد نظر یافت نشد.', true);
+    }
+    // Prevent returning more than what was originally sold/purchased
+    const totalReturnedForThisProductInThisInvoice = returnsData.filter(r => 
+        r.invoiceId === invoiceId && r.productId === productId
+    ).reduce((sum, r) => sum + r.quantity, 0);
+
+    const availableToReturn = originalInvoice.quantity - totalReturnedForThisProductInThisInvoice;
+
+    if(quantity > availableToReturn) {
+      return showReturnMessage(`مقدار مرجوعی برای این محصول در این فاکتور نباید بیشتر از ${availableToReturn} باشد.`, true);
+    }
+
+
+    // Find product in inventory
+    const product = inventory.find(p => p.id === productId);
+    if(!product) {
+      return showReturnMessage('محصول در انبار یافت نشد.', true);
+    }
+
+    // Save return data
+    returnsData.push({
+      id: generateId('return'),
+      invoiceType,
+      invoiceId,
+      productId,
+      quantity,
+      date,
+      customerSupplierId: invoiceType === 'sale' ? originalInvoice.customerId : originalInvoice.supplierId,
+      unitPrice: originalInvoice.unitPrice // Store original unit price for return calculation
+    });
+
+    // Adjust inventory
+    if(invoiceType === 'sale') {
+      // increase stock on sales return
+      product.stock += quantity;
+    } else { // purchase return
+      // decrease stock on purchase return (returned product goes out from inventory)
+      product.stock -= quantity;
+      if (product.stock < 0) product.stock = 0; // Prevent negative stock
+    }
+
+    saveAllData();
+    renderReturnTable();
+    renderInventoryTable();
+    renderDashboard();
+
+    returnForm.reset();
+    document.getElementById('return-product-id').value = '';
+    // Reload invoice options and clear product for new entry
+    loadReturnsInvoiceOptions(); 
+    showReturnMessage('کالای مرجوعی با موفقیت ثبت شد.');
+  });
+
+  function renderReturnTable() {
+    returnTableBody.innerHTML = '';
+    if (returnsData.length === 0) {
+        returnTableBody.innerHTML = '<tr><td colspan="7">هیچ کالای مرجوعی ثبت نشده است.</td></tr>';
+        return;
+    }
+    returnsData.forEach((r, index) => {
+      const product = inventory.find(p => p.id === r.productId);
+      const invoiceTypeText = r.invoiceType === 'sale' ? 'فروش' : 'خرید';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="شماره مرجوعی">${r.id}</td>
+        <td data-label="نوع فاکتور">${invoiceTypeText}</td>
+        <td data-label="شماره فاکتور">${r.invoiceId}</td>
+        <td data-label="محصول">${product ? product.name : '-'}</td>
+        <td data-label="تعداد برگشتی">${r.quantity} ${product ? product.unit : ''}</td>
+        <td data-label="تاریخ">${formatPersianDate(r.date)}</td>
+      `;
+      returnTableBody.appendChild(tr);
+    });
+  }
+
+  function showReturnMessage(msg, error=false) {
+    const el = document.getElementById('return-message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  function loadReturnsInvoiceOptions() {
+    const invoiceType = returnForm['return-invoice-type'].value;
+    const invoiceSelect = returnForm['return-invoice'];
+    invoiceSelect.innerHTML = '<option value="">انتخاب فاکتور...</option>'; // Add default option
+    let invoicesList = [];
+    if(invoiceType === 'sale') invoicesList = salesInvoices;
+    else if(invoiceType === 'purchase') invoicesList = purchaseInvoices;
+
+    if (invoicesList.length === 0) {
+        const msg = invoiceType === 'sale' ? 'هیچ فاکتور فروشی برای مرجوعی موجود نیست.' : 'هیچ فاکتور خریدی برای مرجوعی موجود نیست.';
+        showReturnMessage(msg, true);
+        return;
+    }
+
+    invoicesList.forEach(inv => {
+      const product = inventory.find(p=>p.id===inv.productId);
+      const option = document.createElement('option');
+      option.value = inv.id;
+      option.textContent = `فاکتور شماره: ${inv.id.substring(inv.id.length - 6)} - محصول: ${ product ? product.name : '-' } (${inv.quantity} ${product ? product.unit : ''}) - مبلغ: ${formatCurrency(inv.unitPrice * inv.quantity)} ریال`;
+      invoiceSelect.appendChild(option);
+    });
+  }
+
+  // When return invoice changes, update product autocomplete to only products in that invoice
+  returnForm['return-invoice'].addEventListener('change', () => {
+    const invoiceId = returnForm['return-invoice'].value;
+    const invoiceType = returnForm['return-invoice-type'].value;
+    const inputEl = document.getElementById('return-product');
+    const hiddenIdEl = document.getElementById('return-product-id');
+    inputEl.value = '';
+    hiddenIdEl.value = '';
+
+    // We will restrict products in autocomplete to product in selected invoice only
+    // Pass the invoice product directly to setupAutocomplete, as there's only one product per original invoice line
+    let prodInInvoice = null;
+    if(invoiceType === 'sale') {
+      const saleInv = salesInvoices.find(i => i.id === invoiceId);
+      if(saleInv) prodInInvoice = inventory.find(p => p.id === saleInv.productId);
+    } else if(invoiceType === 'purchase') {
+      const purchaseInv = purchaseInvoices.find(i => i.id === invoiceId);
+      if(purchaseInv) prodInInvoice = inventory.find(p => p.id === purchaseInv.productId);
+    }
+    
+    // If a valid product is found, set its value and hidden ID directly
+    if (prodInInvoice) {
+        inputEl.value = prodInInvoice.name;
+        hiddenIdEl.value = prodInInvoice.id;
+        // Optionally make them readonly if only one product is possible
+        inputEl.readOnly = true;
+    } else {
+        inputEl.readOnly = false;
+    }
+    // Remove autocomplete functionality if product is directly set
+    if (inputEl._autocompleteHandler) {
+      inputEl.removeEventListener('input', inputEl._autocompleteHandler);
+      inputEl.removeEventListener('keydown', inputEl._autocompleteKeydownHandler);
+      // Also ensure all lists are closed if any were open
+      document.querySelectorAll('.autocomplete-items').forEach(item => item.parentNode.removeChild(item));
+    }
+  });
+
+
+  // ===== CHECKS =====
+  const checkForm = document.getElementById('checkForm');
+  const checkTableBody = document.querySelector('#checkTable tbody');
+  let editingCheckId = null;
+
+  checkForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const number = checkForm['check-number'].value.trim();
+    const owner = checkForm['check-owner'].value.trim();
+    const amount = parseFloat(checkForm['check-amount'].value);
+    const date = checkForm['check-date'].value;
+    const status = checkForm['check-status'].value;
+
+    if(!number || !owner || isNaN(amount) || !date || !status) {
+      return showCheckMessage('لطفاً همه فیلدها را به درستی وارد کنید.', true);
+    }
+    if (amount <= 0) {
+        return showCheckMessage('مبلغ چک باید بیشتر از صفر باشد.', true);
+    }
+
+    if(editingCheckId) {
+        const idx = checksData.findIndex(c => c.id === editingCheckId);
+        if (idx > -1) {
+            checksData[idx] = {id: editingCheckId, number, owner, amount, date, status};
+            editingCheckId = null;
+            checkForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-plus-circle"></i> ثبت چک';
+        }
+    } else {
+        // Check if check number already exists for new checks
+        if(checksData.some(c => c.number === number)) {
+            return showCheckMessage('شماره چک تکراری است.', true);
+        }
+        checksData.push({
+            id: generateId('check'),
+            number,
+            owner,
+            amount,
+            date,
+            status
+        });
+    }
+
+    saveData(STORAGE_KEYS.checks, checksData);
+    renderCheckTable();
+
+    checkForm.reset();
+    showCheckMessage('چک با موفقیت ثبت شد.');
+  });
+
+  function renderCheckTable(){
+    checkTableBody.innerHTML = '';
+    if (checksData.length === 0) {
+        checkTableBody.innerHTML = '<tr><td colspan="7">هیچ چکی ثبت نشده است.</td></tr>';
+        return;
+    }
+    checksData.forEach((c, index) => {
+      const tr = document.createElement('tr');
+      const statusText = c.status === 'pending' ? 'در انتظار' : c.status === 'cleared' ? 'وصول شده' : 'برگشت خورده';
+      tr.innerHTML = `
+        <td data-label="ردیف">${index + 1}</td>
+        <td data-label="شماره چک">${c.number}</td>
+        <td data-label="صاحب چک">${c.owner}</td>
+        <td data-label="مبلغ (ریال)">${formatCurrency(c.amount)}</td>
+        <td data-label="تاریخ سررسید">${formatPersianDate(c.date)}</td>
+        <td data-label="وضعیت">${statusText}</td>
+        <td data-label="اقدامات">
+            <button type="button" onclick="editCheck('${c.id}')"><i class="fas fa-edit"></i> ویرایش</button>
+            <button type="button" class="delete-btn" onclick="deleteCheck('${c.id}')"><i class="fas fa-trash-alt"></i> حذف</button>
+        </td>
+      `;
+      checkTableBody.appendChild(tr);
+    });
+  }
+
+  function editCheck(id) {
+    const check = checksData.find(c => c.id === id);
+    if (!check) return;
+
+    editingCheckId = id;
+    checkForm['check-number'].value = check.number;
+    checkForm['check-owner'].value = check.owner;
+    checkForm['check-amount'].value = check.amount;
+    checkForm['check-date'].value = check.date;
+    checkForm['check-status'].value = check.status;
+    checkForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> ذخیره تغییرات';
+  }
+
+  function deleteCheck(id) {
+    if(!confirm('از حذف چک اطمینان دارید؟ این عمل قابل برگشت نیست.')) return;
+    checksData = checksData.filter(c => c.id !== id);
+    saveData(STORAGE_KEYS.checks, checksData);
+    renderCheckTable();
+    showCheckMessage('چک با موفقیت حذف شد.');
+  }
+
+  function showCheckMessage(msg, error = false) {
+    const el = document.getElementById('check-message');
+    el.textContent = msg;
+    el.className = 'message-box ' + (error ? 'error' : 'success');
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+
+  // On page load
+  window.addEventListener('load', () => {
+    loadAllData();
+    renderDashboard(); // Render dashboard first as it's the default active section
+    renderInventoryTable();
+    renderCSList();
+    renderSalesTable();
+    renderPurchaseTable();
+    renderReturnTable();
+    renderCheckTable();
+    loadSalesCustomers();
+    loadPurchaseSuppliers();
+    refreshProductAutocomplete();
+
+    // Set default date inputs to today
+    const today = new Date().toISOString().substr(0,10);
+    document.getElementById('sales-date').value = today;
+    document.getElementById('purchase-date').value = today;
+    document.getElementById('return-date').value = today;
+    document.getElementById('check-date').value = today;
+  });
+</script>
+
+</body>
+</html>
